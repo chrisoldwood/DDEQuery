@@ -372,11 +372,28 @@
 				RelativePath="Toolbar.bmp">
 			</File>
 		</Filter>
+		<Filter
+			Name="Links"
+			Filter="">
+			<File
+				RelativePath=".\All Rates.txt">
+			</File>
+			<File
+				RelativePath=".\Spot Rates.txt">
+			</File>
+		</Filter>
+		<Filter
+			Name="Scripts"
+			Filter="">
+		</Filter>
 		<File
-			RelativePath=".\All Rates.txt">
+			RelativePath=".\ReadMe.txt">
 		</File>
 		<File
-			RelativePath=".\Spot Rates.txt">
+			RelativePath=".\RelNotes.txt">
+		</File>
+		<File
+			RelativePath=".\Setup.ini">
 		</File>
 		<File
 			RelativePath=".\TODO.txt">
