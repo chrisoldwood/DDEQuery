@@ -1,0 +1,9 @@
+- Load links from a file.
+
+- Show update times.
+
+- Implement Execute/Poke commands.
+
+- Hourglass when requesting/advising.
+
+- Don't allow shutdown, during request/advise.
