@@ -37,14 +37,16 @@ protected:
 	//
 	// Controls.
 	//
-	CEditBox	m_ebService;
-	CEditBox	m_ebTopic;
+	CComboBox	m_cbService;
+	CComboBox	m_cbTopic;
 
 	//
 	// Message handlers.
 	//
 	virtual void OnInitDialog();
 	virtual bool OnOk();
+
+	void OnSelectServer();
 };
 
 /******************************************************************************
