@@ -146,6 +146,7 @@ protected:
 	//
 	void UpdateTitle();
 	void EnableFullValue(bool bEnable);
+	CString GetDisplayValue(const CBuffer& oValue);
 };
 
 /******************************************************************************
@@ -179,7 +180,7 @@ inline void CAppDlg::SetItemName(const CString& strName)
 
 inline void CAppDlg::SetItemValue(const CBuffer& oBuffer)
 {
-	m_ebValue.Text(oBuffer.ToString());
+	m_ebValue.Text(GetDisplayValue(oBuffer));
 
 	m_strLastItem = m_ebItem.Text();
 	m_oLastValue  = oBuffer;

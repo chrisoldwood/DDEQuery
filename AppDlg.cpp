@@ -93,11 +93,16 @@ void CAppDlg::OnInitDialog()
 	m_lvLinks.InsertColumn(ADVISE_TIME,  "Updated",   150, LVCFMT_LEFT);
 	m_lvLinks.InsertColumn(ADVISE_COUNT, "# Advises", 100, LVCFMT_RIGHT);
 
+	// Register custom formats.
+	uint nXLTable = CClipboard::RegisterFormat("XlTable");
+
 	// Populate formats combo with text-based formats.
-	m_cbFormat.Add(CClipboard::FormatName(CF_TEXT),    CF_TEXT);
-	m_cbFormat.Add(CClipboard::FormatName(CF_SYLK),    CF_SYLK);
-	m_cbFormat.Add(CClipboard::FormatName(CF_DIF),     CF_DIF);
-	m_cbFormat.Add(CClipboard::FormatName(CF_OEMTEXT), CF_OEMTEXT);
+	m_cbFormat.Add(CClipboard::FormatName(CF_TEXT),        CF_TEXT);
+	m_cbFormat.Add(CClipboard::FormatName(CF_SYLK),        CF_SYLK);
+	m_cbFormat.Add(CClipboard::FormatName(CF_DIF),         CF_DIF);
+	m_cbFormat.Add(CClipboard::FormatName(CF_OEMTEXT),     CF_OEMTEXT);
+	m_cbFormat.Add(CClipboard::FormatName(CF_UNICODETEXT), CF_UNICODETEXT);
+	m_cbFormat.Add(CClipboard::FormatName(nXLTable),       nXLTable);
 
 	// Select CF_TEXT by default.
 	m_cbFormat.CurSel(m_cbFormat.FindExact(CClipboard::FormatName(CF_TEXT)));
@@ -252,7 +257,7 @@ void CAppDlg::UpdateLink(CDDELink* pLink, const CBuffer& oValue, bool bIsAdvise)
 		uint nItem = vItems[i];
 
 		m_lvLinks.ItemImage(nItem, (bIsAdvise) ? IMG_FLASH : IMG_BLANK);
-		m_lvLinks.ItemText (nItem, LAST_VALUE,   oValue.ToString());
+		m_lvLinks.ItemText (nItem, LAST_VALUE,   GetDisplayValue(oValue));
 		m_lvLinks.ItemText (nItem, ADVISE_TIME,  strTime );
 		m_lvLinks.ItemText (nItem, ADVISE_COUNT, strCount);
 	}
@@ -714,4 +719,38 @@ void CAppDlg::OnValueChanged()
 		m_strLastItem = "";
 		EnableFullValue(false);
 	}
+}
+
+/******************************************************************************
+** Method:		GetDisplayValue()
+**
+** Description:	Convert the buffer data into a text value for display.
+**
+** Parameters:	oValue.
+**
+** Returns:		The value as text.
+**
+*******************************************************************************
+*/
+
+CString CAppDlg::GetDisplayValue(const CBuffer& oValue)
+{
+	bool        bBinary = false;
+	const char* pBuffer = static_cast<const char*>(oValue.Buffer());
+	
+	// Check for non-printable chars.
+	for (uint i = 0; i < oValue.Size(); ++i)
+	{
+		uchar cChar = pBuffer[i];
+
+		// Non-printable AND also NOT Tab/CR/LF/EoS?
+		if ( (!isprint(cChar)) && (cChar != '\t') && (cChar != '\r')
+		  && (cChar != '\n') && (cChar != '\0') )
+		{
+			bBinary = true;
+			break;
+		}
+	}
+
+	return (!bBinary) ? oValue.ToString() : "(binary)";
 }
