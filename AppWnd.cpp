@@ -122,7 +122,7 @@ void CAppWnd::OnClose()
 	App.m_rcLastPos = Placement();
 
 	// Close connection.
-	App.m_AppCmds.OnServerDisconnect();
+	App.m_AppCmds.DoServerDisconnect();
 }
 
 /******************************************************************************
