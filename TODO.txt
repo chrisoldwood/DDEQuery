@@ -1,13 +1,5 @@
+- Status bar indicator for when in a request etc.
+
+- Support other formats, eg Unicode text and xltable format.
+
 - Simple script support.
-
-- Separate viewer for long/binary requested values (+ double click link).
-
-- Save links to file for reuse.
-
-- Advise indicator.
-
-- Advise column sorting.
-
-- Stop all advises command.
-
-- Progress dialog when request takes a long time.
