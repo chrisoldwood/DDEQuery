@@ -66,11 +66,13 @@ void CAppWnd::OnCreate(const CRect& rcClient)
 	m_Menu.LoadRsc(IDR_APPMENU);
 	Menu(&m_Menu);
 
-//	m_ToolBar.Create(*this, IDC_TOOL_BAR, rcClient);
-//	ToolBar(&m_ToolBar);
+	m_oFlashIcon.LoadRsc(IDB_LISTICONS, RGB(255, 0, 255));
 
-	m_StatusBar.Create(*this, IDC_STATUS_BAR, rcClient);
+	m_StatusBar.Create(*this, IDC_STATUS_BAR, CRect());
 	StatusBar(&m_StatusBar);
+
+	m_oInDDEIcon.Create(m_StatusBar, IDC_INDDE_ICON, CRect());
+	m_StatusBar.AddPanel(m_oInDDEIcon);
 
 	m_AppDlg.RunModeless(*this);
 	ActiveDlg(&m_AppDlg);
@@ -151,4 +153,24 @@ void CAppWnd::UpdateTitle()
 	}
 
 	Title(strTitle);
+}
+
+/******************************************************************************
+** Method:		ShowFlashIcon()
+**
+** Description:	Show or hide the flash icon in the status bar.
+**
+** Parameters:	bShow	Show or hide flag.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppWnd::ShowFlashIcon(bool bShow)
+{
+	if (bShow)
+		m_oInDDEIcon.SetIcon(m_oFlashIcon, 1, true);
+	else
+		m_oInDDEIcon.ClearIcon(true);
 }

@@ -32,27 +32,26 @@ public:
 	// Methods.
 	//
 	void UpdateTitle();
+	void ShowFlashIcon(bool bShow);
 
 	//
 	// Members.
 	//
-	CAppDlg		m_AppDlg;
-	CFrameMenu	m_Menu;
-//	CAppToolBar	m_ToolBar;
-	CStatusBar	m_StatusBar;
+	CAppDlg			m_AppDlg;
+	CFrameMenu		m_Menu;
+	CStatusBar		m_StatusBar;
+	CStatusBarIcon	m_oInDDEIcon;
 
 protected:
 	//
 	// Internal members.
 	//
-	CAccel		m_Accel;
+	CAccel			m_Accel;
+	CTransparentBmp	m_oFlashIcon;
 
 	// Child window IDs.
-	enum
-	{
-		IDC_TOOL_BAR   = 100,
-		IDC_STATUS_BAR = 101
-	};
+	static const uint IDC_STATUS_BAR = 101;
+	static const uint IDC_INDDE_ICON = 102;
 
 	//
 	// Message processors.
