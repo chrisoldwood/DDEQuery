@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="DDEQuery"
+	ProjectGUID="{E480C39E-6C7E-47F5-AAD1-C809157B487C}"
 	SccProjectName="&quot;$/Win32/DDEQuery&quot;, SNDAAAAA"
 	SccAuxPath=""
 	SccLocalPath="."
