@@ -373,6 +373,9 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\All Rates.txt">
+		</File>
+		<File
 			RelativePath=".\Spot Rates.txt">
 		</File>
 		<File
