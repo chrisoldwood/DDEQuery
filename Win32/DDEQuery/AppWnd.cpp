@@ -92,6 +92,13 @@ void CAppWnd::OnCreate(const CRect& rcClient)
 
 bool CAppWnd::OnQueryClose()
 {
+	// Inside a DDE request?
+	if (App.m_bInDDECall)
+	{
+		App.m_AppWnd.AlertMsg("You cannot close DDE Query while a request is in progress.");
+		return false;
+	}
+
 	// Fetch windows final placement.
 	App.m_rcLastPos = Placement();
 
