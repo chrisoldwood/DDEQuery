@@ -35,12 +35,12 @@ BEGIN
 		BLOCK "040904E4"
 		BEGIN
 			VALUE "FileDescription",  "DDE Query\0"
-			VALUE "FileVersion",      "1.0\0"
+			VALUE "FileVersion",      "1.0 Beta\0"
 			VALUE "InternalName",     "DDEQuery.exe\0"
 			VALUE "LegalCopyright",   "(C) Chris Oldwood 2004\0"
 			VALUE "OriginalFilename", "DDEQuery.exe\0"
 			VALUE "ProductName",      "DDE Query\0"
-			VALUE "ProductVersion",   "1.0\0"
+			VALUE "ProductVersion",   "1.0 Beta\0"
 #ifdef _DEBUG
 			VALUE "Comments",         "Debug Build\0"
 #endif
