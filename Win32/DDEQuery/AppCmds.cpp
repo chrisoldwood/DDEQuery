@@ -104,7 +104,7 @@ void CAppCmds::OnServerConnect()
 /******************************************************************************
 ** Method:		OnServerDisconnect()
 **
-** Description:	Close the connection to the server.
+** Description:	User closing the connection to the server.
 **
 ** Parameters:	None.
 **
@@ -115,9 +115,31 @@ void CAppCmds::OnServerConnect()
 
 void CAppCmds::OnServerDisconnect()
 {
-	ASSERT(!App.m_bInDDECall);
+	// Inside DDE call?
+	if ((App.m_pDDEConv != NULL) && (App.m_bInDDECall))
+	{
+		App.m_AppWnd.AlertMsg("You cannot close the connection while a request is in progress.");
+		return;
+	}
 
-	// Conversation open?
+	DoServerDisconnect();
+}
+
+/******************************************************************************
+** Method:		DoServerDisconnect()
+**
+** Description:	Close the connection to the server.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppCmds::DoServerDisconnect()
+{
+	// Conversation open.
 	if (App.m_pDDEConv != NULL)
 	{
 		App.m_pDDEClient->DestroyConversation(App.m_pDDEConv);
@@ -125,7 +147,7 @@ void CAppCmds::OnServerDisconnect()
 		App.m_pDDEConv = NULL;
 	}
 
-	// Clear to the links listview.
+	// Clear the links listview.
 	App.m_AppWnd.m_AppDlg.RemoveAllLinks();
 
 	UpdateUI();
