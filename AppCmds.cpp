@@ -244,6 +244,7 @@ void CAppCmds::OnServerConnect(const CString& strService, const CString& strTopi
 	catch (CDDEException& e)
 	{
 		OnServerDisconnect();
+
 		App.AlertMsg(e.ErrorText());
 	}
 
@@ -291,6 +292,10 @@ void CAppCmds::OnCommandRequest()
 	}
 	catch (CDDEException& e)
 	{
+		// Cleanup, if disconnected.
+		if (!App.m_pDDEConv->IsConnected())
+			DoServerDisconnect();
+
 		App.AlertMsg(e.ErrorText());
 	}
 }
@@ -332,6 +337,10 @@ void CAppCmds::OnCommandPoke()
 	}
 	catch (CDDEException& e)
 	{
+		// Cleanup, if disconnected.
+		if (!App.m_pDDEConv->IsConnected())
+			DoServerDisconnect();
+
 		App.AlertMsg(e.ErrorText());
 	}
 }
@@ -372,6 +381,10 @@ void CAppCmds::OnCommandExecute()
 	}
 	catch (CDDEException& e)
 	{
+		// Cleanup, if disconnected.
+		if (!App.m_pDDEConv->IsConnected())
+			DoServerDisconnect();
+
 		App.AlertMsg(e.ErrorText());
 	}
 }
@@ -416,6 +429,10 @@ void CAppCmds::OnLinkAdvise()
 	}
 	catch (CDDEException& e)
 	{
+		// Cleanup, if disconnected.
+		if (!App.m_pDDEConv->IsConnected())
+			DoServerDisconnect();
+
 		App.AlertMsg(e.ErrorText());
 	}
 }
@@ -514,13 +531,6 @@ void CAppCmds::OnLinkFile()
 	// Create links...
 	for (int i = 0; i < astrLinks.Size(); ++i)
 	{
-		// Conversation terminated?
-		if (App.m_pDDEConv == NULL)
-		{
-			App.AlertMsg("Lost connection to DDE server.");
-			return;
-		}
-
 		try
 		{
 			CAutoBool oLock(&App.m_bInDDECall);
@@ -535,6 +545,12 @@ void CAppCmds::OnLinkFile()
 		}
 		catch(CDDEException& /*e*/)
 		{
+			// Cleanup, if disconnected.
+			if (!App.m_pDDEConv->IsConnected())
+			{
+				DoServerDisconnect();
+				return;
+			}
 		}
 	}
 
