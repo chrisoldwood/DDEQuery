@@ -9,3 +9,5 @@
 - Advise column sorting.
 
 - Stop all advises command.
+
+- No tooltip for MRU items.
