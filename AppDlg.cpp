@@ -9,6 +9,7 @@
 */
 
 #include "AppHeaders.hpp"
+#include "FullValueDlg.hpp"
 
 /******************************************************************************
 ** Method:		Default constructor.
@@ -32,6 +33,7 @@ CAppDlg::CAppDlg()
 		CTRL(IDC_ITEM,	        &m_ebItem  )
 		CTRL(IDC_FORMAT,	    &m_cbFormat)
 		CTRL(IDC_VALUE,	        &m_ebValue )
+		CTRL(IDC_FULL_VALUE,	&m_btnValue)
 		CTRL(IDC_LINKS_LABEL,	&m_txLinks )
 		CTRL(IDC_LINKS,	        &m_lvLinks )
 	END_CTRL_TABLE
@@ -41,13 +43,19 @@ CAppDlg::CAppDlg()
 		CTRLGRAV(IDC_ITEM,		  LEFT_EDGE,  TOP_EDGE, RIGHT_EDGE, TOP_EDGE   )
 		CTRLGRAV(IDC_FORMAT,	  RIGHT_EDGE, TOP_EDGE, RIGHT_EDGE, TOP_EDGE   )
 		CTRLGRAV(IDC_VALUE,		  LEFT_EDGE,  TOP_EDGE, RIGHT_EDGE, TOP_EDGE   )
+		CTRLGRAV(IDC_FULL_VALUE,  RIGHT_EDGE, TOP_EDGE, RIGHT_EDGE, TOP_EDGE   )
 		CTRLGRAV(IDC_LINKS_LABEL, LEFT_EDGE,  TOP_EDGE, RIGHT_EDGE, TOP_EDGE   )
 		CTRLGRAV(IDC_LINKS,       LEFT_EDGE,  TOP_EDGE, RIGHT_EDGE, BOTTOM_EDGE)
 	END_GRAVITY_TABLE
 
 	DEFINE_CTRLMSG_TABLE
-		NFY_CTRLMSG(IDC_LINKS, LVN_ITEMCHANGED, OnLinksSelchange)
-		NFY_CTRLMSG(IDC_LINKS, LVN_COLUMNCLICK, OnLinksClickColumn)
+		NFY_CTRLMSG(IDC_LINKS,      LVN_ITEMCHANGED, OnLinksSelchange)
+		NFY_CTRLMSG(IDC_LINKS,      LVN_COLUMNCLICK, OnLinksClickColumn)
+		NFY_CTRLMSG(IDC_LINKS,      NM_RCLICK,       OnLinksRightClick)
+		NFY_CTRLMSG(IDC_LINKS,      NM_DBLCLK,       OnLinksDoubleClick)
+		CMD_CTRLMSG(IDC_ITEM,       EN_CHANGE,       OnItemChanged)
+		CMD_CTRLMSG(IDC_VALUE,      EN_CHANGE,       OnValueChanged)
+		CMD_CTRLMSG(IDC_FULL_VALUE, BN_CLICKED,      OnFullValue)
 	END_CTRLMSG_TABLE
 }
 
@@ -65,6 +73,8 @@ CAppDlg::CAppDlg()
 
 void CAppDlg::OnInitDialog()
 {
+	m_btnValue.Enable(false);
+
 	// Set edit box styles.
 	m_ebItem.Font(CFont(ANSI_FIXED_FONT));
 	m_ebValue.Font(CFont(ANSI_FIXED_FONT));
@@ -74,10 +84,14 @@ void CAppDlg::OnInitDialog()
 	m_lvLinks.FullRowSelect(true);
 //	m_lvLinks.GridLines(true);
 
+	// Set the ListView icons.
+	m_lvLinks.ImageList(LVSIL_SMALL, IDB_LISTICONS, 16, RGB(255, 0, 255));
+
 	// Create links lisview columns.
-	m_lvLinks.InsertColumn(0, "Item",    150, LVCFMT_LEFT);
-	m_lvLinks.InsertColumn(1, "Value",   200, LVCFMT_LEFT);
-	m_lvLinks.InsertColumn(2, "Updated", 150, LVCFMT_LEFT);
+	m_lvLinks.InsertColumn(ITEM_NAME,    "Item",      150, LVCFMT_LEFT);
+	m_lvLinks.InsertColumn(LAST_VALUE,   "Value",     200, LVCFMT_LEFT);
+	m_lvLinks.InsertColumn(ADVISE_TIME,  "Updated",   150, LVCFMT_LEFT);
+	m_lvLinks.InsertColumn(ADVISE_COUNT, "# Advises", 100, LVCFMT_RIGHT);
 
 	// Populate formats combo with text-based formats.
 	m_cbFormat.Add(CClipboard::FormatName(CF_TEXT),    CF_TEXT);
@@ -89,6 +103,67 @@ void CAppDlg::OnInitDialog()
 	m_cbFormat.CurSel(m_cbFormat.FindExact(CClipboard::FormatName(CF_TEXT)));
 
 	UpdateTitle();
+
+	// Start advise indicator timer.
+	if (App.m_nFlashTime > 0)
+		StartTimer(TIMER_ID, TIMER_FREQ);
+}
+
+/******************************************************************************
+** Method:		OnDestroy()
+**
+** Description:	The dialog is being destroyed.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppDlg::OnDestroy()
+{
+	// Stop advise indicator timer.
+	StopTimer(TIMER_ID);
+
+	// Cleanup listview.
+	RemoveAllLinks();
+}
+
+/******************************************************************************
+** Method:		OnTimer()
+**
+** Description:	Advise indicator timer fired.
+**
+** Parameters:	nTimerID	The timer ID.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppDlg::OnTimer(uint /*nTimerID*/)
+{
+	DWORD dwNow = ::GetTickCount();
+
+	// Clear all stale indicators.
+	for (int i = 0; i < m_lvLinks.ItemCount(); ++i)
+	{
+		// Indicator on?
+		if (m_lvLinks.ItemImage(i) == IMG_FLASH)
+		{
+			CDDELink* pDDELink  = GetLink(i);
+			LinkData* pLinkData = NULL;
+
+			m_oLinksData.Find(pDDELink, pLinkData);
+
+			ASSERT(pLinkData != NULL);
+
+			// If stale, turn indicator off.
+			if ((dwNow - pLinkData->m_dwLastAdvise) > App.m_nFlashTime)
+				m_lvLinks.ItemImage(i, IMG_BLANK);
+		}
+	}
 }
 
 /******************************************************************************
@@ -106,11 +181,12 @@ void CAppDlg::OnInitDialog()
 void CAppDlg::AddLink(CDDELink* pLink)
 {
 	// Add the new link.
-	int n = m_lvLinks.AppendItem(pLink->Item());
+	int n = m_lvLinks.AppendItem(pLink->Item(), IMG_BLANK);
 
-	m_lvLinks.ItemText(n, 1, "(none)");
-	m_lvLinks.ItemText(n, 2, "(none)");
-	m_lvLinks.ItemPtr (n,    pLink);
+	m_lvLinks.ItemText(n, LAST_VALUE,   "(none)");
+	m_lvLinks.ItemText(n, ADVISE_TIME,  "(none)");
+	m_lvLinks.ItemText(n, ADVISE_COUNT, "0");
+	m_lvLinks.ItemPtr (n, pLink);
 
 	// Duplicate link?
 	if (m_lvLinks.FindItem(pLink) != n)
@@ -118,9 +194,14 @@ void CAppDlg::AddLink(CDDELink* pLink)
 		int o = m_lvLinks.FindItem(pLink);
 
 		// Copy value from 1st link.
-		m_lvLinks.ItemText(n, 1, m_lvLinks.ItemText(o, 1));
-		m_lvLinks.ItemText(n, 2, m_lvLinks.ItemText(o, 2));
+		m_lvLinks.ItemText(n, LAST_VALUE,   m_lvLinks.ItemText(o, LAST_VALUE));
+		m_lvLinks.ItemText(n, ADVISE_TIME,  m_lvLinks.ItemText(o, ADVISE_TIME));
+		m_lvLinks.ItemText(n, ADVISE_COUNT, "0");
 	}
+
+	// Add to link data map.
+	if (!m_oLinksData.Exists(pLink))
+		m_oLinksData.Add(pLink, new LinkData(pLink));
 
 	UpdateTitle();
 }
@@ -131,19 +212,36 @@ void CAppDlg::AddLink(CDDELink* pLink)
 ** Description:	Update the specified link.
 **
 ** Parameters:	pLink		The link.
-**				srtValue	The new value.
+**				oValue		The new value.
+**				bIsAdvise	Is from an advise?
 **
 ** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-void CAppDlg::UpdateLink(CDDELink* pLink, const CString& strValue)
+void CAppDlg::UpdateLink(CDDELink* pLink, const CBuffer& oValue, bool bIsAdvise)
 {
-	CListView::CUIntArray vItems;
+	LinkData* pLinkData = NULL;
 
-	// Format the update time.
-	CString strTime = CDateTime::Current().ToString();
+	// Find links advise data.
+	// NB: Could have just been unadvised.
+	m_oLinksData.Find(pLink, pLinkData);
+
+	if (pLinkData == NULL)
+		return;
+
+	// Update link data entry.
+	if (bIsAdvise)
+		pLinkData->SetLastAdvise(oValue);
+	else
+		pLinkData->SetCurrentValue(oValue);
+
+	// Format advise details.
+	CString strTime  = pLinkData->m_dtLastAdvise.ToString();
+	CString strCount = CStrCvt::FormatInt(pLinkData->m_nAdviseCount);
+
+	CListView::CUIntArray vItems;
 
 	// Find all items referencing the link.
 	m_lvLinks.FindAllItems(pLink, vItems);
@@ -151,8 +249,12 @@ void CAppDlg::UpdateLink(CDDELink* pLink, const CString& strValue)
 	// Update items.
 	for (int i = 0; i < vItems.Size(); ++i)
 	{
-		m_lvLinks.ItemText(vItems[i], 1, strValue);
-		m_lvLinks.ItemText(vItems[i], 2, strTime );
+		uint nItem = vItems[i];
+
+		m_lvLinks.ItemImage(nItem, (bIsAdvise) ? IMG_FLASH : IMG_BLANK);
+		m_lvLinks.ItemText (nItem, LAST_VALUE,   oValue.ToString());
+		m_lvLinks.ItemText (nItem, ADVISE_TIME,  strTime );
+		m_lvLinks.ItemText (nItem, ADVISE_COUNT, strCount);
 	}
 }
 
@@ -175,11 +277,35 @@ void CAppDlg::RemoveLink(int nItem)
 	// Save current selection.
 	int nSel = m_lvLinks.Selection();
 
+	// Delete listview item.
+	CDDELink* pDDELink = GetLink(nItem);
+
 	m_lvLinks.DeleteItem(nItem);
 
 	// If just deleted, adjust selected item.
 	if (nSel == nItem)
+	{
+		if (nSel >= m_lvLinks.ItemCount())
+			--nSel;
+
 		m_lvLinks.Select(nSel);
+	}
+
+	// Last reference to link?
+	if (m_lvLinks.FindItem(pDDELink) == LB_ERR)
+	{
+		LinkData* pLinkData = NULL;
+
+		// Remove entry from link data map.
+		if (m_oLinksData.Find(pDDELink, pLinkData))
+		{
+			delete pLinkData;
+
+			m_oLinksData.Remove(pDDELink);
+		}
+	}
+
+	ASSERT(m_lvLinks.ItemCount() >= m_oLinksData.Count());
 
 	UpdateTitle();
 }
@@ -198,28 +324,96 @@ void CAppDlg::RemoveLink(int nItem)
 
 void CAppDlg::RemoveAllLinks()
 {
+	CLinksDataIter oIter(m_oLinksData);
+	CDDELink*      pDDELink  = NULL;
+	LinkData*      pLinkData = NULL;
+
+	// Clear link data map.
+	while (oIter.Next(pDDELink, pLinkData))
+		delete pLinkData;
+
+	m_oLinksData.RemoveAll();
+
+	// Clear listview.
 	m_lvLinks.DeleteAllItems();
 
 	UpdateTitle();
 }
 
 /******************************************************************************
-** Method:		GetLink()
+** Method:		IsLinkUnadvised()
 **
-** Description:	Get the link referenced by the listview item.
+** Description:	Queries if the link has been advised of any changes.
 **
-** Parameters:	nItem	The item to query.
+** Parameters:	pLink	The link.
 **
-** Returns:		The link.
+** Returns:		true or false.
 **
 *******************************************************************************
 */
 
-CDDELink* CAppDlg::GetLink(int nItem)
+bool CAppDlg::IsLinkUnadvised(CDDELink* pLink)
 {
-	ASSERT(nItem != LB_ERR);
+	ASSERT(pLink != NULL);
 
-	return static_cast<CDDELink*>(m_lvLinks.ItemPtr(nItem));
+	LinkData* pLinkData = NULL;
+
+	// Query advise count in link data.
+	m_oLinksData.Find(pLink, pLinkData);
+
+	ASSERT(pLinkData != NULL);
+
+	return (pLinkData->m_nAdviseCount == 0);
+}
+
+/******************************************************************************
+** Method:		GetLinkLastValue()
+**
+** Description:	Gets the last advised value for the link.
+**
+** Parameters:	pLink	The link.
+**
+** Returns:		The value.
+**
+*******************************************************************************
+*/
+
+CBuffer CAppDlg::GetLinkLastValue(CDDELink* pLink)
+{
+	ASSERT(pLink != NULL);
+
+	LinkData* pLinkData = NULL;
+
+	// Query advise count in link data.
+	m_oLinksData.Find(pLink, pLinkData);
+
+	ASSERT(pLinkData != NULL);
+
+	return pLinkData->m_oLastAdvise;
+}
+
+/******************************************************************************
+** Method:		GetFirstSelLink()
+**
+** Description:	Get the first selected link.
+**
+** Parameters:	None.
+**
+** Returns:		The link or NULL, if no selection.
+**
+*******************************************************************************
+*/
+
+CDDELink* CAppDlg::GetFirstSelLink()
+{
+	CDDELink* pLink = NULL;
+
+	int nSel = m_lvLinks.Selection();
+
+	if (nSel != LB_ERR)
+		pLink = GetLink(nSel);
+
+	return pLink;
 }
 
 /******************************************************************************
@@ -238,6 +432,7 @@ LRESULT CAppDlg::OnLinksSelchange(NMHDR& oNMHdr)
 {
 	NMLISTVIEW& oMsgHdr = reinterpret_cast<NMLISTVIEW&>(oNMHdr);
 
+	// Selectied item changed?
 	if (oMsgHdr.uChanged & LVIF_STATE)
 		App.m_AppCmds.UpdateUI();
 
@@ -292,15 +487,122 @@ int CALLBACK CAppDlg::Compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 	CAppDlg*  pDialog = reinterpret_cast<CAppDlg*>(lParamSort);
 	
 	// Sort by link name?
-	if (pDialog->m_nSortCol == 0)
+	if (pDialog->m_nSortCol == ITEM_NAME)
 	{
 		if (pDialog->m_bSortAsc)
 			return strcmp(pLink1->Item(), pLink2->Item());
 		else
 			return strcmp(pLink2->Item(), pLink1->Item());
 	}
+	// Sort by last advise time?
+	else if (pDialog->m_nSortCol == ADVISE_TIME)
+	{
+		LinkData* pLinkData1 = NULL;
+		LinkData* pLinkData2 = NULL;
+
+		pDialog->m_oLinksData.Find(pLink1, pLinkData1);
+		pDialog->m_oLinksData.Find(pLink2, pLinkData2);
+
+		ASSERT((pLinkData1 != NULL) && (pLinkData2 != NULL));
+
+		if (pDialog->m_bSortAsc)
+			return pLinkData1->m_dwLastAdvise - pLinkData2->m_dwLastAdvise;
+		else
+			return pLinkData2->m_dwLastAdvise - pLinkData1->m_dwLastAdvise;
+	}
+	// Sort by advise count?
+	else if (pDialog->m_nSortCol == ADVISE_COUNT)
+	{
+		LinkData* pLinkData1 = NULL;
+		LinkData* pLinkData2 = NULL;
+
+		pDialog->m_oLinksData.Find(pLink1, pLinkData1);
+		pDialog->m_oLinksData.Find(pLink2, pLinkData2);
+
+		ASSERT((pLinkData1 != NULL) && (pLinkData2 != NULL));
+
+		if (pDialog->m_bSortAsc)
+			return pLinkData1->m_nAdviseCount - pLinkData2->m_nAdviseCount;
+		else
+			return pLinkData2->m_nAdviseCount - pLinkData1->m_nAdviseCount;
+	}
 
 	return 0;
+}
+
+/******************************************************************************
+** Method:		OnLinksRightClick()
+**
+** Description:	Right click on the links listview, show context menu.
+**
+** Parameters:	oHdr	See WM_NOTIFY.
+**
+** Returns:		0.
+**
+*******************************************************************************
+*/
+
+LRESULT CAppDlg::OnLinksRightClick(NMHDR& /*oHdr*/)
+{
+	// Only show menu, if a selection.
+	if (m_lvLinks.IsSelection())
+	{
+		CPopupMenu oMenu(IDR_CONTEXT);
+
+		// Get co-ordinates of mouse click.
+		const MSG& oCurrMsg = App.m_MainThread.CurrentMsg();
+
+		// Show menu.
+		uint nCmdID = oMenu.TrackMenu(App.m_AppWnd, CPoint(oCurrMsg.pt.x, oCurrMsg.pt.y));
+
+		// Dispatch command.
+		if (nCmdID != NULL)
+			App.m_AppWnd.PostCommand(nCmdID);
+	}
+
+	return 0;
+}
+
+/******************************************************************************
+** Method:		OnLinksDoubleClick()
+**
+** Description:	Double-click on the links listview.
+**
+** Parameters:	oHdr	See WM_NOTIFY.
+**
+** Returns:		0.
+**
+*******************************************************************************
+*/
+
+LRESULT CAppDlg::OnLinksDoubleClick(NMHDR& /*oHdr*/)
+{
+	// If a selection, exec "Display Full Value".
+	if (m_lvLinks.IsSelection())
+		App.m_AppWnd.PostCommand(ID_LINK_SHOW_VALUE);
+
+	return 0;
+}
+
+/******************************************************************************
+** Method:		EnableUI()
+**
+** Description:	Enable or Disable the UI.
+**
+** Parameters:	bEnable		New state.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppDlg::EnableUI(bool bEnable)
+{
+	m_ebItem.ReadOnly(!bEnable);
+	m_cbFormat.Enable(bEnable);
+	m_ebValue.ReadOnly(!bEnable);
+	m_btnValue.Enable(bEnable && !m_strLastItem.Empty());
+	m_lvLinks.Enable(bEnable);
 }
 
 /******************************************************************************
@@ -323,4 +625,93 @@ void CAppDlg::UpdateTitle()
 		strTitle += " [" + CStrCvt::FormatInt(m_lvLinks.ItemCount()) + "]";
 
 	m_txLinks.Title(strTitle);
+}
+
+/******************************************************************************
+** Method:		EnableFullValue()
+**
+** Description:	Enable or Disable the "Full Value" button.
+**
+** Parameters:	bEnable		The new state.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppDlg::EnableFullValue(bool bEnable)
+{
+	// Check whole UI is not disabled.
+	bEnable = bEnable && m_ebValue.IsEnabled();
+
+	m_btnValue.Enable(bEnable);
+}
+
+/******************************************************************************
+** Method:		OnFullValue()
+**
+** Description:	Show the Items value in full.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppDlg::OnFullValue()
+{
+	if (m_strLastItem.Empty())
+		return;
+
+	CFullValueDlg oDlg;
+
+	oDlg.m_strItem = m_strLastItem;
+	oDlg.m_oValue  = m_oLastValue;
+
+	oDlg.RunModal(*this);
+}
+
+/******************************************************************************
+** Method:		OnItemChanged()
+**
+** Description:	The Item field has been changed.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppDlg::OnItemChanged()
+{
+	// Update state of full value button.
+	if (!m_strLastItem.Empty())
+	{
+		m_strLastItem = "";
+		EnableFullValue(false);
+	}
+}
+
+/******************************************************************************
+** Method:		OnValueChanged()
+**
+** Description:	The Value field has been changed.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppDlg::OnValueChanged()
+{
+	// Update state of full value button.
+	if (!m_strLastItem.Empty())
+	{
+		m_strLastItem = "";
+		EnableFullValue(false);
+	}
 }
