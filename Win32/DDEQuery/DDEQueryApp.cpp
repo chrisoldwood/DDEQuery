@@ -215,9 +215,9 @@ void CDDEQueryApp::SaveConfig()
 *******************************************************************************
 */
 
-void CDDEQueryApp::OnDisconnect(CDDECltConv* pConv)
+void CDDEQueryApp::OnDisconnect(CDDECltConv* /*pConv*/)
 {
-	ASSERT(pConv == m_pDDEConv);
+//	ASSERT(pConv == m_pDDEConv);
 
 	// Cleanup.
 	m_AppCmds.OnServerDisconnect();
