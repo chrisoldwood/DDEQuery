@@ -1,7 +1,3 @@
-- Load links from a file.
-
-- Show link update times + indicator.
-
-- Implement Execute/Poke commands.
-
 - Simple script support.
+
+- Separate viewer for long/binary requested values.
