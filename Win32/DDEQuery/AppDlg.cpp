@@ -26,19 +26,21 @@ CAppDlg::CAppDlg()
 	: CMainDlg(IDD_MAIN)
 {
 	DEFINE_CTRL_TABLE
-		CTRL(IDC_ITEM_LABEL,	&m_txItem )
-		CTRL(IDC_ITEM,	        &m_ebItem )
-		CTRL(IDC_VALUE,	        &m_ebValue)
-		CTRL(IDC_LINKS_LABEL,	&m_txLinks)
-		CTRL(IDC_LINKS,	        &m_lvLinks)
+		CTRL(IDC_ITEM_LABEL,	&m_txItem  )
+		CTRL(IDC_ITEM,	        &m_ebItem  )
+		CTRL(IDC_FORMAT,	    &m_cbFormat)
+		CTRL(IDC_VALUE,	        &m_ebValue )
+		CTRL(IDC_LINKS_LABEL,	&m_txLinks )
+		CTRL(IDC_LINKS,	        &m_lvLinks )
 	END_CTRL_TABLE
 
 	DEFINE_GRAVITY_TABLE
-		CTRLGRAV(IDC_ITEM_LABEL,  LEFT_EDGE, TOP_EDGE, RIGHT_EDGE, TOP_EDGE   )
-		CTRLGRAV(IDC_ITEM,		  LEFT_EDGE, TOP_EDGE, RIGHT_EDGE, TOP_EDGE   )
-		CTRLGRAV(IDC_VALUE,		  LEFT_EDGE, TOP_EDGE, RIGHT_EDGE, TOP_EDGE   )
-		CTRLGRAV(IDC_LINKS_LABEL, LEFT_EDGE, TOP_EDGE, RIGHT_EDGE, TOP_EDGE   )
-		CTRLGRAV(IDC_LINKS,       LEFT_EDGE, TOP_EDGE, RIGHT_EDGE, BOTTOM_EDGE)
+		CTRLGRAV(IDC_ITEM_LABEL,  LEFT_EDGE,  TOP_EDGE, RIGHT_EDGE, TOP_EDGE   )
+		CTRLGRAV(IDC_ITEM,		  LEFT_EDGE,  TOP_EDGE, RIGHT_EDGE, TOP_EDGE   )
+		CTRLGRAV(IDC_FORMAT,	  RIGHT_EDGE, TOP_EDGE, RIGHT_EDGE, TOP_EDGE   )
+		CTRLGRAV(IDC_VALUE,		  LEFT_EDGE,  TOP_EDGE, RIGHT_EDGE, TOP_EDGE   )
+		CTRLGRAV(IDC_LINKS_LABEL, LEFT_EDGE,  TOP_EDGE, RIGHT_EDGE, TOP_EDGE   )
+		CTRLGRAV(IDC_LINKS,       LEFT_EDGE,  TOP_EDGE, RIGHT_EDGE, BOTTOM_EDGE)
 	END_GRAVITY_TABLE
 
 	DEFINE_CTRLMSG_TABLE
@@ -70,8 +72,18 @@ void CAppDlg::OnInitDialog()
 //	m_lvLinks.GridLines(true);
 
 	// Create links lisview columns.
-	m_lvLinks.InsertColumn(0, "Item",  150, LVCFMT_LEFT);
-	m_lvLinks.InsertColumn(1, "Value", 200, LVCFMT_LEFT);
+	m_lvLinks.InsertColumn(0, "Item",    150, LVCFMT_LEFT);
+	m_lvLinks.InsertColumn(1, "Value",   200, LVCFMT_LEFT);
+	m_lvLinks.InsertColumn(2, "Updated", 150, LVCFMT_LEFT);
+
+	// Populate formats combo with text-based formats.
+	m_cbFormat.Add(CClipboard::FormatName(CF_TEXT),    CF_TEXT);
+	m_cbFormat.Add(CClipboard::FormatName(CF_SYLK),    CF_SYLK);
+	m_cbFormat.Add(CClipboard::FormatName(CF_DIF),     CF_DIF);
+	m_cbFormat.Add(CClipboard::FormatName(CF_OEMTEXT), CF_OEMTEXT);
+
+	// Select CF_TEXT by default.
+	m_cbFormat.CurSel(m_cbFormat.FindExact(CClipboard::FormatName(CF_TEXT)));
 }
 
 /******************************************************************************
@@ -91,6 +103,7 @@ void CAppDlg::AddLink(CDDELink* pLink)
 	int n = m_lvLinks.AppendItem(pLink->Item());
 
 	m_lvLinks.ItemText(n, 1, "(none)");
+	m_lvLinks.ItemText(n, 2, "(none)");
 	m_lvLinks.ItemPtr (n,    pLink);
 }
 
@@ -110,12 +123,18 @@ void CAppDlg::UpdateLink(CDDELink* pLink, const CString& strValue)
 {
 	CListView::CUIntArray vItems;
 
+	// Format the update time.
+	CString strTime = CDateTime::Current().ToString();
+
 	// Find all items referencing the link.
 	m_lvLinks.FindAllItems(pLink, vItems);
 
 	// Update items.
 	for (int i = 0; i < vItems.Size(); ++i)
+	{
 		m_lvLinks.ItemText(vItems[i], 1, strValue);
+		m_lvLinks.ItemText(vItems[i], 2, strTime );
+	}
 }
 
 /******************************************************************************

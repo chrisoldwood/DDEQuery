@@ -37,10 +37,13 @@ public:
 
 	CDDELink* GetLink(int nItem);
 
+	uint GetSelFormat();
+
 	//
 	// Controls.
 	//
 	CLabel		m_txItem;
+	CComboBox	m_cbFormat;
 	CEditBox	m_ebItem;
 	CEditBox	m_ebValue;
 	CLabel		m_txLinks;
@@ -60,5 +63,12 @@ protected:
 **
 *******************************************************************************
 */
+
+inline uint CAppDlg::GetSelFormat()
+{
+	ASSERT(m_cbFormat.CurSel() != CB_ERR);
+
+	return m_cbFormat.ItemData(m_cbFormat.CurSel());
+}
 
 #endif //APPDLG_HPP
