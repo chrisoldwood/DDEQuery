@@ -51,10 +51,20 @@ public:
 
 protected:
 	//
+	// Members.
+	//
+	int		m_nSortCol;
+	bool	m_bSortAsc;
+
+	//
 	// Message processors.
 	//
 	virtual void OnInitDialog();
 	LRESULT OnLinksSelchange(NMHDR& oHdr);
+	LRESULT OnLinksClickColumn(NMHDR& rMsgHdr);
+
+	// Sort function.
+	static int CALLBACK Compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
 };
 
 /******************************************************************************

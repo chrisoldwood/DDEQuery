@@ -24,6 +24,8 @@
 
 CAppDlg::CAppDlg()
 	: CMainDlg(IDD_MAIN)
+	, m_nSortCol(0)
+	, m_bSortAsc(false)
 {
 	DEFINE_CTRL_TABLE
 		CTRL(IDC_ITEM_LABEL,	&m_txItem  )
@@ -45,6 +47,7 @@ CAppDlg::CAppDlg()
 
 	DEFINE_CTRLMSG_TABLE
 		NFY_CTRLMSG(IDC_LINKS, LVN_ITEMCHANGED, OnLinksSelchange)
+		NFY_CTRLMSG(IDC_LINKS, LVN_COLUMNCLICK, OnLinksClickColumn)
 	END_CTRLMSG_TABLE
 }
 
@@ -210,6 +213,65 @@ LRESULT CAppDlg::OnLinksSelchange(NMHDR& oNMHdr)
 
 	if (oMsgHdr.uChanged & LVIF_STATE)
 		App.m_AppCmds.UpdateUI();
+
+	return 0;
+}
+
+/******************************************************************************
+** Method:		OnLinksClickColumn()
+**
+** Description:	Grid column clicked, change sort column or reverse sort order.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+LRESULT CAppDlg::OnLinksClickColumn(NMHDR& rMsgHdr)
+{
+	NMLISTVIEW& oMsgHdr = reinterpret_cast<NMLISTVIEW&>(rMsgHdr);
+
+	// Reverse order?
+	if (m_nSortCol == oMsgHdr.iSubItem)
+		m_bSortAsc = !m_bSortAsc;
+
+	// Get the column clicked.
+	m_nSortCol = oMsgHdr.iSubItem;
+
+	// Resort.
+	m_lvLinks.Sort(Compare, (LPARAM)this);
+
+	return 0;
+}
+
+/******************************************************************************
+** Method:		Compare()
+**
+** Description:	Compare function for sorting the listview.
+**
+** Parameters:	See LVM_SORTITEMS.
+**
+** Returns:		See LVM_SORTITEMS.
+**
+*******************************************************************************
+*/
+
+int CALLBACK CAppDlg::Compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+	CDDELink* pLink1  = reinterpret_cast<CDDELink*>(lParam1);
+	CDDELink* pLink2  = reinterpret_cast<CDDELink*>(lParam2);
+	CAppDlg*  pDialog = reinterpret_cast<CAppDlg*>(lParamSort);
+	
+	// Sort by link name?
+	if (pDialog->m_nSortCol == 0)
+	{
+		if (pDialog->m_bSortAsc)
+			return strcmp(pLink1->Item(), pLink2->Item());
+		else
+			return strcmp(pLink2->Item(), pLink1->Item());
+	}
 
 	return 0;
 }
