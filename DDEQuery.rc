@@ -198,7 +198,7 @@ CAPTION "Preferences"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     GROUPBOX        "Link Settings",IDC_STATIC,5,5,150,40
-    LTEXT           "Advise Indication (ms):",IDC_STATIC,15,22,80,8
+    LTEXT           "Advise &Indication (ms):",IDC_STATIC,15,22,80,8
     EDITTEXT        IDC_FLASH_TIME,95,20,50,12,ES_AUTOHSCROLL
     DEFPUSHBUTTON   "OK",IDOK,30,55,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,85,55,50,14
@@ -385,7 +385,7 @@ STRINGTABLE
 BEGIN
     ID_LINK_REQ_VALUES      "Request the current value for unadvised items\nRequest Values"
     ID_LINK_COPY_CLIPBOARD  "Copy a link to the first selected item to the clipboard\nCopy To Clipboard"
-    ID_LINK_COPY_ITEM       "Copy a link to the first selected item to the 'Item' field\nCopy As Item"
+    ID_LINK_COPY_ITEM       "Copy the first selected item to the 'Item' field\nCopy As Item"
     ID_LINK_PASTE_ITEM      "Paste a link from the clipboard into the 'Item' field\nPaste As Item"
     ID_LINK_OPEN_FILE       "Load links from a file\nLoad Links"
     ID_LINK_SAVE_FILE       "Save links to a file\nSave Links"
