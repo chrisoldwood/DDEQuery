@@ -238,6 +238,9 @@ void CAppCmds::OnServerConnect(const CString& strService, const CString& strTopi
 
 		CAutoBool oLock(&App.m_bInDDECall);
 
+		// Update status bar.
+		App.m_AppWnd.ShowFlashIcon(true);
+
 		// Create conversation.
 		App.m_pDDEConv = App.m_pDDEClient->CreateConversation(strService, strTopic);
 
@@ -261,6 +264,7 @@ void CAppCmds::OnServerConnect(const CString& strService, const CString& strTopi
 
 	UpdateUI();
 	App.m_AppWnd.UpdateTitle();
+	App.m_AppWnd.ShowFlashIcon(false);
 }
 
 /******************************************************************************
@@ -295,6 +299,9 @@ void CAppCmds::OnCommandRequest()
 	{
 		CAutoBool oLock(&App.m_bInDDECall);
 
+		// Update status bar.
+		App.m_AppWnd.ShowFlashIcon(true);
+
 		// Make the request.
 		CDDEData oData = App.m_pDDEConv->Request(strItem, nFormat);
 
@@ -309,6 +316,8 @@ void CAppCmds::OnCommandRequest()
 
 		App.AlertMsg(e.ErrorText());
 	}
+
+	App.m_AppWnd.ShowFlashIcon(false);
 }
 
 /******************************************************************************
@@ -343,6 +352,9 @@ void CAppCmds::OnCommandPoke()
 	{
 		CAutoBool oLock(&App.m_bInDDECall);
 
+		// Update status bar.
+		App.m_AppWnd.ShowFlashIcon(true);
+
 		// Poke the value.
 		App.m_pDDEConv->Poke(strItem, strValue);
 	}
@@ -354,6 +366,8 @@ void CAppCmds::OnCommandPoke()
 
 		App.AlertMsg(e.ErrorText());
 	}
+
+	App.m_AppWnd.ShowFlashIcon(false);
 }
 
 /******************************************************************************
@@ -387,6 +401,9 @@ void CAppCmds::OnCommandExecute()
 	{
 		CAutoBool oLock(&App.m_bInDDECall);
 
+		// Update status bar.
+		App.m_AppWnd.ShowFlashIcon(true);
+
 		// Execute it.
 		App.m_pDDEConv->Execute(strCmd);
 	}
@@ -398,6 +415,8 @@ void CAppCmds::OnCommandExecute()
 
 		App.AlertMsg(e.ErrorText());
 	}
+
+	App.m_AppWnd.ShowFlashIcon(false);
 }
 
 /******************************************************************************
@@ -432,6 +451,9 @@ void CAppCmds::OnLinkAdvise()
 	{
 		CAutoBool oLock(&App.m_bInDDECall);
 
+		// Update status bar.
+		App.m_AppWnd.ShowFlashIcon(true);
+
 		// Create the link.
 		CDDELink* pLink = App.m_pDDEConv->CreateLink(strItem, nFormat);
 
@@ -448,6 +470,7 @@ void CAppCmds::OnLinkAdvise()
 	}
 
 	UpdateUI();
+	App.m_AppWnd.ShowFlashIcon(false);
 }
 
 /******************************************************************************
@@ -477,6 +500,9 @@ void CAppCmds::OnLinkUnadvise()
 	{
 		CAutoBool oLock(&App.m_bInDDECall);
 
+		// Update status bar.
+		App.m_AppWnd.ShowFlashIcon(true);
+
 		// Destroy all selected links...
 		for (int i = 0; i < vItems.Size(); ++i)
 		{
@@ -491,6 +517,7 @@ void CAppCmds::OnLinkUnadvise()
 			oDlg.RemoveLink(vItems[i]);
 
 		UpdateUI();
+		App.m_AppWnd.ShowFlashIcon(false);
 	}
 }
 
@@ -515,10 +542,14 @@ void CAppCmds::OnLinkUnadviseAll()
 
 	CAutoBool oLock(&App.m_bInDDECall);
 
+	// Update status bar.
+	App.m_AppWnd.ShowFlashIcon(true);
+
 	// Destroy all links.
 	App.m_pDDEConv->DestroyAllLinks();
 
 	UpdateUI();
+	App.m_AppWnd.ShowFlashIcon(false);
 }
 
 /******************************************************************************
@@ -541,6 +572,9 @@ void CAppCmds::OnLinkReqValues()
 
 	App.m_pDDEConv->GetAllLinks(vLinks);
 
+	// Update status bar.
+	App.m_AppWnd.ShowFlashIcon(true);
+
 	// For all links...
 	for (int i = 0; i < vLinks.Size(); ++i) 
 	{
@@ -562,6 +596,8 @@ void CAppCmds::OnLinkReqValues()
 		{
 		}
 	}
+
+	App.m_AppWnd.ShowFlashIcon(false);
 }
 
 /******************************************************************************
@@ -705,6 +741,9 @@ void CAppCmds::OnLinkOpenFile()
 
 	uint nErrors = astrLinks.Size();
 
+	// Update status bar.
+	App.m_AppWnd.ShowFlashIcon(true);
+
 	// Create links...
 	for (int i = 0; i < astrLinks.Size(); ++i)
 	{
@@ -730,6 +769,8 @@ void CAppCmds::OnLinkOpenFile()
 			}
 		}
 	}
+
+	App.m_AppWnd.ShowFlashIcon(false);
 
 	// Report any errors.
 	if (nErrors > 0)
