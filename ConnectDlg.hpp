@@ -39,6 +39,7 @@ protected:
 	//
 	CComboBox	m_cbService;
 	CComboBox	m_cbTopic;
+	CButton		m_btnPaste;
 
 	//
 	// Message handlers.
@@ -47,6 +48,7 @@ protected:
 	virtual bool OnOk();
 
 	void OnSelectServer();
+	void OnPasteLink();
 };
 
 /******************************************************************************

@@ -33,12 +33,14 @@ CConnectDlg::CConnectDlg()
 	: CDialog(IDD_CONNECT)
 {
 	DEFINE_CTRL_TABLE
-		CTRL(IDC_SERVICE, &m_cbService)
-		CTRL(IDC_TOPIC,   &m_cbTopic  )
+		CTRL(IDC_SERVICE,    &m_cbService)
+		CTRL(IDC_TOPIC,      &m_cbTopic  )
+		CTRL(IDC_PASTE_LINK, &m_btnPaste )
 	END_CTRL_TABLE
 
 	DEFINE_CTRLMSG_TABLE
-		CMD_CTRLMSG(IDC_SERVICE, CBN_SELCHANGE, OnSelectServer)
+		CMD_CTRLMSG(IDC_SERVICE,    CBN_SELCHANGE, OnSelectServer)
+		CMD_CTRLMSG(IDC_PASTE_LINK, BN_CLICKED,    OnPasteLink   )
 	END_CTRLMSG_TABLE
 }
 
@@ -97,6 +99,9 @@ void CConnectDlg::OnInitDialog()
 
 		m_cbTopic.CurSel(nDefault);
 	}
+
+	// Is link on clipboard?
+	m_btnPaste.Enable(CDDELink::CanPasteLink());
 }
 
 /******************************************************************************
@@ -175,4 +180,29 @@ void CConnectDlg::OnSelectServer()
 	}
 	catch (CDDEException& /*e*/)
 	{ }
+}
+
+/******************************************************************************
+** Method:		OnPasteLink()
+**
+** Description:	Paste the link into the Service and Topic fields.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CConnectDlg::OnPasteLink()
+{
+	CString strService, strTopic, strItem;
+
+	// Get the link from the clipboard.
+	if (!CDDELink::PasteLink(strService, strTopic, strItem))
+		return;
+
+	// Copy to controls.
+	m_cbService.Title(strService);
+	m_cbTopic.Title(strTopic);
 }
