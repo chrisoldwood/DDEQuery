@@ -1,5 +1,1 @@
-- Status bar indicator for when in a request etc.
-
-- Support other formats, eg Unicode text and xltable format.
-
 - Simple script support.
