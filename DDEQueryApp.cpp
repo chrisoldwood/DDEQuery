@@ -48,6 +48,7 @@ const char* CDDEQueryApp::INI_FILE_VER = "1.0";
 
 CDDEQueryApp::CDDEQueryApp()
 	: CApp(m_AppWnd, m_AppCmds)
+	, m_strLastFolder(CPath::ApplicationDir())
 	, m_oMRUList(5)
 	, m_pDDEClient(CDDEClient::Instance())
 	, m_pDDEConv(NULL)
@@ -170,8 +171,9 @@ void CDDEQueryApp::LoadConfig()
 	CString strVer = m_oIniFile.ReadString("Version", "Version", INI_FILE_VER);
 
 	// Read the MRU settings.
-	m_strLastService = m_oIniFile.ReadString("Main", "LastService", "");
-	m_strLastTopic   = m_oIniFile.ReadString("Main", "LastTopic",   "");
+	m_strLastService = m_oIniFile.ReadString("Main", "LastService", m_strLastService);
+	m_strLastTopic   = m_oIniFile.ReadString("Main", "LastTopic",   m_strLastTopic  );
+	m_strLastFolder  = m_oIniFile.ReadString("Main", "LastFolder",  m_strLastFolder );
 
 	// Read the window pos and size.
 	m_rcLastPos.left   = m_oIniFile.ReadInt("UI", "Left",   0);
@@ -203,6 +205,7 @@ void CDDEQueryApp::SaveConfig()
 	// Write the MRU settings.
 	m_oIniFile.WriteString("Main", "LastService", m_strLastService);
 	m_oIniFile.WriteString("Main", "LastTopic",   m_strLastTopic  );
+	m_oIniFile.WriteString("Main", "LastFolder",  m_strLastFolder );
 
 	// Write the window pos and size.
 	m_oIniFile.WriteInt("UI", "Left",   m_rcLastPos.left  );

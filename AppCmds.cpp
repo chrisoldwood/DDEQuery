@@ -446,7 +446,7 @@ void CAppCmds::OnLinkFile()
 	CPath strPath;
 
 	// Select the filename.
-	if (!strPath.Select(App.m_AppWnd, CPath::OpenFile, szTXTExts, szTXTDefExt, CPath::ApplicationDir()))
+	if (!strPath.Select(App.m_AppWnd, CPath::OpenFile, szTXTExts, szTXTDefExt, App.m_strLastFolder))
 		return;
 
 	try
@@ -488,6 +488,9 @@ void CAppCmds::OnLinkFile()
 		// Report any errors.
 		if (nErrors > 0)
 			App.AlertMsg("Failed to create %d links.", nErrors);
+
+		// Remember folder used.
+		App.m_strLastFolder = strPath.Directory();
 	}
 	catch(CFileException& e)
 	{
