@@ -1,9 +1,7 @@
 - Load links from a file.
 
-- Show update times.
+- Show link update times + indicator.
 
 - Implement Execute/Poke commands.
 
-- Hourglass when requesting/advising.
-
-- Don't allow shutdown, during request/advise.
+- Simple script support.
