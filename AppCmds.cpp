@@ -86,6 +86,8 @@ void CAppCmds::OnServerConnect()
 
 		try
 		{
+			CAutoBool oLock(&App.m_bInDDECall);
+
 			// Close existing conversation.
 			OnServerDisconnect();
 
@@ -188,6 +190,8 @@ void CAppCmds::OnCommandRequest()
 
 	try
 	{
+		CAutoBool oLock(&App.m_bInDDECall);
+
 		// Make the request.
 		CDDEData oData   = App.m_pDDEConv->Request(strItem, nFormat);
 
@@ -268,6 +272,8 @@ void CAppCmds::OnCommandAdvise()
 
 	try
 	{
+		CAutoBool oLock(&App.m_bInDDECall);
+
 		// Create the link.
 		CDDELink* pLink = App.m_pDDEConv->CreateLink(strItem, nFormat);
 
@@ -306,6 +312,8 @@ void CAppCmds::OnCommandUnadvise()
 
 	// Remove from links listview.
 	oDlg.RemoveLink(nSel);
+
+	CAutoBool oLock(&App.m_bInDDECall);
 
 	// Destroy the link.
 	App.m_pDDEConv->DestroyLink(pLink);
