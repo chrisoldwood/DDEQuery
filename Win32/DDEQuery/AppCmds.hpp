@@ -35,14 +35,19 @@ public:
 	// Server menu.
 	void OnServerConnect();
 	void OnServerDisconnect();
+	void OnServerMRU(int nCmdID);
 	void OnServerExit();
+	void OnServerConnect(const CString& strService, const CString& strTopic);
 
 	// Command menu.
 	void OnCommandRequest();
 	void OnCommandPoke();
 	void OnCommandExecute();
-	void OnCommandAdvise();
-	void OnCommandUnadvise();
+
+	// Link menu.
+	void OnLinkAdvise();
+	void OnLinkUnadvise();
+	void OnLinkFile();
 
 	// Help menu.
 	void OnHelpAbout();
@@ -55,8 +60,9 @@ public:
 	void OnUICommandRequest();
 	void OnUICommandPoke();
 	void OnUICommandExecute();
-	void OnUICommandAdvise();
-	void OnUICommandUnadvise();
+	void OnUILinkAdvise();
+	void OnUILinkUnadvise();
+	void OnUILinkFile();
 
 protected:
 	//
