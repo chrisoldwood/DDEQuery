@@ -64,6 +64,11 @@ public:
 	void OnUILinkUnadvise();
 	void OnUILinkFile();
 
+	//
+	// Command methods.
+	//
+	virtual void UpdateUI();
+
 protected:
 	//
 	// Internal methods.

@@ -516,6 +516,31 @@ void CAppCmds::OnHelpAbout()
 }
 
 /******************************************************************************
+** Method:		UpdateUI()
+**
+** Description:	Updates the main dialog controls.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppCmds::UpdateUI()
+{
+	bool bConvOpen = (App.m_pDDEConv != NULL);
+
+	App.m_AppWnd.m_AppDlg.m_ebItem.ReadOnly(!bConvOpen);
+	App.m_AppWnd.m_AppDlg.m_cbFormat.Enable(bConvOpen);
+	App.m_AppWnd.m_AppDlg.m_ebValue.ReadOnly(!bConvOpen);
+	App.m_AppWnd.m_AppDlg.m_lvLinks.Enable(bConvOpen);
+
+	// Invoke specific commmand handlers.
+	CCmdControl::UpdateUI();
+}
+
+/******************************************************************************
 ** Method:		OnUI...()
 **
 ** Description:	UI update handlers.
