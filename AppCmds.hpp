@@ -35,6 +35,7 @@ public:
 	// Server menu.
 	void OnServerConnect();
 	void OnServerDisconnect();
+	void DoServerDisconnect();
 	void OnServerMRU(int nCmdID);
 	void OnServerExit();
 	void OnServerConnect(const CString& strService, const CString& strTopic);
