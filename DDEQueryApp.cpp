@@ -28,9 +28,9 @@ CDDEQueryApp App;
 */
 
 #ifdef _DEBUG
-const char* CDDEQueryApp::VERSION      = "v1.0 Beta [Debug]";
+const char* CDDEQueryApp::VERSION      = "v1.0 [Debug]";
 #else
-const char* CDDEQueryApp::VERSION      = "v1.0 Beta";
+const char* CDDEQueryApp::VERSION      = "v1.0";
 #endif
 const char* CDDEQueryApp::INI_FILE_VER = "1.0";
 
