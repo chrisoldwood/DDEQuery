@@ -73,7 +73,7 @@ BEGIN
     POPUP "&Server"
     BEGIN
         MENUITEM "&Connect...\tCtrl+O",         ID_SERVER_CONNECT
-        MENUITEM "&Disconnect",                 ID_SERVER_DISCONNECT
+        MENUITEM "&Disconnect\tCtrl+F4",        ID_SERVER_DISCONNECT
         MENUITEM SEPARATOR
         MENUITEM "&1",                          ID_SERVER_MRU_1
         MENUITEM "&2",                          ID_SERVER_MRU_2
@@ -178,13 +178,14 @@ IDR_APPTOOLBAR          BITMAP                  "Toolbar.bmp"
 IDR_APPACCEL ACCELERATORS 
 BEGIN
     "E",            ID_COMMAND_EXECUTE,     VIRTKEY, CONTROL, NOINVERT
-    "L",            ID_LINK_ADVISE,         VIRTKEY, CONTROL, NOINVERT
-    "O",            ID_SERVER_CONNECT,      VIRTKEY, CONTROL, NOINVERT
     "P",            ID_COMMAND_POKE,        VIRTKEY, CONTROL, NOINVERT
     "R",            ID_COMMAND_REQUEST,     VIRTKEY, CONTROL, NOINVERT
-    "U",            ID_LINK_UNADVISE,       VIRTKEY, CONTROL, NOINVERT
-    VK_F1,          ID_HELP_CONTENTS,       VIRTKEY, NOINVERT
     VK_RETURN,      ID_COMMAND_REQUEST,     VIRTKEY, NOINVERT
+    VK_F1,          ID_HELP_CONTENTS,       VIRTKEY, NOINVERT
+    "L",            ID_LINK_ADVISE,         VIRTKEY, CONTROL, NOINVERT
+    "U",            ID_LINK_UNADVISE,       VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_SERVER_CONNECT,      VIRTKEY, CONTROL, NOINVERT
+    VK_F4,          ID_SERVER_DISCONNECT,   VIRTKEY, CONTROL, NOINVERT
 END
 
 
@@ -269,6 +270,11 @@ BEGIN
     ID_SERVER_POPUP         "Server options"
     ID_SERVER_CONNECT       "Open a connection to a server\nConnect"
     ID_SERVER_DISCONNECT    "Close the current connection\nDisconnect"
+    ID_SERVER_MRU_1         "Open this connection"
+    ID_SERVER_MRU_2         "Open this connection"
+    ID_SERVER_MRU_3         "Open this connection"
+    ID_SERVER_MRU_4         "Open this connection"
+    ID_SERVER_MRU_5         "Open this connection"
     ID_SERVER_EXIT          "Close the application"
 END
 
