@@ -100,13 +100,29 @@ bool CAppWnd::OnQueryClose()
 		return false;
 	}
 
+	return true;
+}
+
+/******************************************************************************
+** Method:		OnClose()
+**
+** Description:	The main window is closing.
+**				NB: Called from WM_CLOSE or WM_ENDSESSION.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppWnd::OnClose()
+{
 	// Fetch windows final placement.
 	App.m_rcLastPos = Placement();
 
 	// Close connection.
 	App.m_AppCmds.OnServerDisconnect();
-
-	return true;
 }
 
 /******************************************************************************
