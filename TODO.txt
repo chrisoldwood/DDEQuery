@@ -10,12 +10,4 @@
 
 - Stop all advises command.
 
-- No tooltip for MRU items.
-
 - Progress dialog when request takes a long time.
-
-- Handle disconnect better (query IsOpen()).
-
-- Disconnect accelerator key.
-
-- Link count on main view.
