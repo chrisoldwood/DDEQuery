@@ -28,9 +28,9 @@ CDDEQueryApp App;
 */
 
 #ifdef _DEBUG
-const char* CDDEQueryApp::VERSION      = "v1.0 [Debug]";
+const char* CDDEQueryApp::VERSION      = "v1.0 Beta [Debug]";
 #else
-const char* CDDEQueryApp::VERSION      = "v1.0";
+const char* CDDEQueryApp::VERSION      = "v1.0 Beta";
 #endif
 const char* CDDEQueryApp::INI_FILE_VER = "1.0";
 
@@ -233,8 +233,9 @@ void CDDEQueryApp::OnDisconnect(CDDECltConv* /*pConv*/)
 {
 //	ASSERT(pConv == m_pDDEConv);
 
-	// Cleanup.
-	m_AppCmds.OnServerDisconnect();
+	// Cleanup, if possible.
+	if (!m_bInDDECall)
+		m_AppCmds.DoServerDisconnect();
 
 	// Notify user.
 	AlertMsg("Lost connection to DDE server.");
