@@ -87,6 +87,8 @@ void CAppDlg::OnInitDialog()
 
 	// Select CF_TEXT by default.
 	m_cbFormat.CurSel(m_cbFormat.FindExact(CClipboard::FormatName(CF_TEXT)));
+
+	UpdateTitle();
 }
 
 /******************************************************************************
@@ -119,6 +121,8 @@ void CAppDlg::AddLink(CDDELink* pLink)
 		m_lvLinks.ItemText(n, 1, m_lvLinks.ItemText(o, 1));
 		m_lvLinks.ItemText(n, 2, m_lvLinks.ItemText(o, 2));
 	}
+
+	UpdateTitle();
 }
 
 /******************************************************************************
@@ -176,6 +180,8 @@ void CAppDlg::RemoveLink(int nItem)
 	// If just deleted, adjust selected item.
 	if (nSel == nItem)
 		m_lvLinks.Select(nSel);
+
+	UpdateTitle();
 }
 
 /******************************************************************************
@@ -193,6 +199,8 @@ void CAppDlg::RemoveLink(int nItem)
 void CAppDlg::RemoveAllLinks()
 {
 	m_lvLinks.DeleteAllItems();
+
+	UpdateTitle();
 }
 
 /******************************************************************************
@@ -293,4 +301,26 @@ int CALLBACK CAppDlg::Compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 	}
 
 	return 0;
+}
+
+/******************************************************************************
+** Method:		UpdateTitle()
+**
+** Description:	Update the links title.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppDlg::UpdateTitle()
+{
+	CString strTitle = "Active Links";
+
+	if (m_lvLinks.ItemCount() > 0)
+		strTitle += " [" + CStrCvt::FormatInt(m_lvLinks.ItemCount()) + "]";
+
+	m_txLinks.Title(strTitle);
 }

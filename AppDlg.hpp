@@ -65,6 +65,11 @@ protected:
 
 	// Sort function.
 	static int CALLBACK Compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
+
+	//
+	// Internal methods.
+	//
+	void UpdateTitle();
 };
 
 /******************************************************************************
