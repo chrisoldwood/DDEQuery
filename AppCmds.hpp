@@ -48,7 +48,17 @@ public:
 	// Link menu.
 	void OnLinkAdvise();
 	void OnLinkUnadvise();
-	void OnLinkFile();
+	void OnLinkUnadviseAll();
+	void OnLinkReqValues();
+	void OnLinkCopyClipboard();
+	void OnLinkCopyItem();
+	void OnLinkPasteItem();
+	void OnLinkOpenFile();
+	void OnLinkSaveFile();
+	void OnLinkShowValue();
+
+	// Options menu.
+	void OnOptionsPrefs();
 
 	// Help menu.
 	void OnHelpAbout();
@@ -58,12 +68,21 @@ public:
 	//
 	void OnUIServerConnect();
 	void OnUIServerDisconnect();
+
 	void OnUICommandRequest();
 	void OnUICommandPoke();
 	void OnUICommandExecute();
+
 	void OnUILinkAdvise();
 	void OnUILinkUnadvise();
-	void OnUILinkFile();
+	void OnUILinkUnadviseAll();
+	void OnUILinkReqValues();
+	void OnUILinkCopyClipboard();
+	void OnUILinkCopyItem();
+	void OnUILinkPasteItem();
+	void OnUILinkOpenFile();
+	void OnUILinkSaveFile();
+	void OnUILinkShowValue();
 
 	//
 	// Command methods.

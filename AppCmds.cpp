@@ -9,8 +9,10 @@
 */
 
 #include "AppHeaders.hpp"
-#include "AboutDlg.hpp"
 #include "ConnectDlg.hpp"
+#include "FullValueDlg.hpp"
+#include "PrefsDlg.hpp"
+#include "AboutDlg.hpp"
 
 /******************************************************************************
 **
@@ -42,21 +44,30 @@ CAppCmds::CAppCmds()
 	// Define the command table.
 	DEFINE_CMD_TABLE
 		// Server menu.
-		CMD_ENTRY(ID_SERVER_CONNECT,	OnServerConnect,		OnUIServerConnect,		-1)
-		CMD_ENTRY(ID_SERVER_DISCONNECT,	OnServerDisconnect,		OnUIServerDisconnect,	-1)
+		CMD_ENTRY(ID_SERVER_CONNECT,		OnServerConnect,		OnUIServerConnect,		-1)
+		CMD_ENTRY(ID_SERVER_DISCONNECT,		OnServerDisconnect,		OnUIServerDisconnect,	-1)
 		CMD_RANGE(ID_SERVER_MRU_1,
-				  ID_SERVER_MRU_5,		OnServerMRU,			NULL,					-1) 
-		CMD_ENTRY(ID_SERVER_EXIT,		OnServerExit,			NULL,					-1)
+				  ID_SERVER_MRU_5,			OnServerMRU,			NULL,					-1) 
+		CMD_ENTRY(ID_SERVER_EXIT,			OnServerExit,			NULL,					-1)
 		// Command menu.
-		CMD_ENTRY(ID_COMMAND_REQUEST,	OnCommandRequest,		OnUICommandRequest,		-1)
-		CMD_ENTRY(ID_COMMAND_POKE,		OnCommandPoke,			OnUICommandPoke,		-1)
-		CMD_ENTRY(ID_COMMAND_EXECUTE,	OnCommandExecute,		OnUICommandExecute,		-1)
+		CMD_ENTRY(ID_COMMAND_REQUEST,		OnCommandRequest,		OnUICommandRequest,		-1)
+		CMD_ENTRY(ID_COMMAND_POKE,			OnCommandPoke,			OnUICommandPoke,		-1)
+		CMD_ENTRY(ID_COMMAND_EXECUTE,		OnCommandExecute,		OnUICommandExecute,		-1)
 		// Link menu.
-		CMD_ENTRY(ID_LINK_ADVISE,		OnLinkAdvise,			OnUILinkAdvise,			-1)
-		CMD_ENTRY(ID_LINK_UNADVISE,		OnLinkUnadvise,			OnUILinkUnadvise,		-1)
-		CMD_ENTRY(ID_LINK_FILE,			OnLinkFile,				OnUILinkFile,			-1)
+		CMD_ENTRY(ID_LINK_ADVISE,			OnLinkAdvise,			OnUILinkAdvise,			-1)
+		CMD_ENTRY(ID_LINK_UNADVISE,			OnLinkUnadvise,			OnUILinkUnadvise,		-1)
+		CMD_ENTRY(ID_LINK_UNADVISE_ALL,		OnLinkUnadviseAll,		OnUILinkUnadviseAll,	-1)
+		CMD_ENTRY(ID_LINK_REQ_VALUES,		OnLinkReqValues,		OnUILinkReqValues,		-1)
+		CMD_ENTRY(ID_LINK_COPY_CLIPBOARD,	OnLinkCopyClipboard,	OnUILinkCopyClipboard,	-1)
+		CMD_ENTRY(ID_LINK_COPY_ITEM,		OnLinkCopyItem,			OnUILinkCopyItem,		-1)
+		CMD_ENTRY(ID_LINK_PASTE_ITEM,		OnLinkPasteItem,		OnUILinkPasteItem,		-1)
+		CMD_ENTRY(ID_LINK_OPEN_FILE,		OnLinkOpenFile,			OnUILinkOpenFile,		-1)
+		CMD_ENTRY(ID_LINK_SAVE_FILE,		OnLinkSaveFile,			OnUILinkSaveFile,		-1)
+		CMD_ENTRY(ID_LINK_SHOW_VALUE,		OnLinkShowValue,		OnUILinkShowValue,		-1)
+		// Options menu.
+		CMD_ENTRY(ID_OPTIONS_PREFS,			OnOptionsPrefs,			NULL,					-1)
 		// Help menu.
-		CMD_ENTRY(ID_HELP_ABOUT,		OnHelpAbout,			NULL,					10)
+		CMD_ENTRY(ID_HELP_ABOUT,			OnHelpAbout,			NULL,					10)
 	END_CMD_TABLE
 }
 
@@ -235,7 +246,7 @@ void CAppCmds::OnServerConnect(const CString& strService, const CString& strTopi
 		App.m_strLastTopic   = strTopic;
 
 		// Set focus to Item field.
-		App.m_AppWnd.m_AppDlg.m_ebItem.Focus();
+		App.m_AppWnd.m_AppDlg.Focus();
 
 		// Update the MRU list.
 		App.m_oMRUList.Add(strService + "|" + strTopic);
@@ -269,14 +280,14 @@ void CAppCmds::OnCommandRequest()
 	ASSERT(App.m_pDDEConv != NULL);
 
 	// Get the DDE item.
-	CString strItem   = App.m_AppWnd.m_AppDlg.m_ebItem.Text();
+	CString strItem   = App.m_AppWnd.m_AppDlg.GetItemName();
 	uint    nFormat   = App.m_AppWnd.m_AppDlg.GetSelFormat();
 
 	// Item provided?
 	if (strItem == "")
 	{
 		App.AlertMsg("Please provide the item name.");
-		App.m_AppWnd.m_AppDlg.m_ebItem.Focus();
+		App.m_AppWnd.m_AppDlg.SetItemFocus();
 		return;
 	}
 
@@ -288,7 +299,7 @@ void CAppCmds::OnCommandRequest()
 		CDDEData oData = App.m_pDDEConv->Request(strItem, nFormat);
 
 		// Display value.
-		App.m_AppWnd.m_AppDlg.m_ebValue.Text(oData.GetString());
+		App.m_AppWnd.m_AppDlg.SetItemValue(oData.GetBuffer());
 	}
 	catch (CDDEException& e)
 	{
@@ -317,14 +328,14 @@ void CAppCmds::OnCommandPoke()
 	ASSERT(App.m_pDDEConv != NULL);
 
 	// Get the DDE item and value.
-	CString strItem  = App.m_AppWnd.m_AppDlg.m_ebItem.Text();
-	CString strValue = App.m_AppWnd.m_AppDlg.m_ebValue.Text();
+	CString strItem  = App.m_AppWnd.m_AppDlg.GetItemName();
+	CString strValue = App.m_AppWnd.m_AppDlg.GetItemValue();
 
 	// Item provided?
 	if (strItem == "")
 	{
 		App.AlertMsg("Please provide the item name.");
-		App.m_AppWnd.m_AppDlg.m_ebItem.Focus();
+		App.m_AppWnd.m_AppDlg.SetItemFocus();
 		return;
 	}
 
@@ -362,13 +373,13 @@ void CAppCmds::OnCommandExecute()
 	ASSERT(App.m_pDDEConv != NULL);
 
 	// Get the DDE command.
-	CString strCmd = App.m_AppWnd.m_AppDlg.m_ebItem.Text();
+	CString strCmd = App.m_AppWnd.m_AppDlg.GetItemName();
 
 	// Command provided?
 	if (strCmd == "")
 	{
 		App.AlertMsg("Please provide the command.");
-		App.m_AppWnd.m_AppDlg.m_ebItem.Focus();
+		App.m_AppWnd.m_AppDlg.SetItemFocus();
 		return;
 	}
 
@@ -406,14 +417,14 @@ void CAppCmds::OnLinkAdvise()
 	ASSERT(App.m_pDDEConv != NULL);
 
 	// Get the DDE item.
-	CString strItem = App.m_AppWnd.m_AppDlg.m_ebItem.Text();
+	CString strItem = App.m_AppWnd.m_AppDlg.GetItemName();
 	uint    nFormat = CF_TEXT;
 
 	// Item provided?
 	if (strItem == "")
 	{
 		App.AlertMsg("Please provide the item name.");
-		App.m_AppWnd.m_AppDlg.m_ebItem.Focus();
+		App.m_AppWnd.m_AppDlg.SetItemFocus();
 		return;
 	}
 
@@ -435,6 +446,8 @@ void CAppCmds::OnLinkAdvise()
 
 		App.AlertMsg(e.ErrorText());
 	}
+
+	UpdateUI();
 }
 
 /******************************************************************************
@@ -452,28 +465,39 @@ void CAppCmds::OnLinkAdvise()
 void CAppCmds::OnLinkUnadvise()
 {
 	ASSERT(App.m_pDDEConv != NULL);
-	ASSERT(App.m_AppWnd.m_AppDlg.m_lvLinks.IsSelection());
+	ASSERT(App.m_AppWnd.m_AppDlg.IsLinkSelected());
 
 	// Shortcut to dialog.
 	CAppDlg& oDlg = App.m_AppWnd.m_AppDlg;
 
-	// Get selected link.
-	int       nSel  = oDlg.m_lvLinks.Selection();
-	CDDELink* pLink = oDlg.GetLink(nSel);
+	CListView::CUIntArray vItems;
 
-	// Remove from links listview.
-	oDlg.RemoveLink(nSel);
+	// Get selected items.
+	if (oDlg.GetAllSelLinks(vItems) > 0)
+	{
+		CAutoBool oLock(&App.m_bInDDECall);
 
-	CAutoBool oLock(&App.m_bInDDECall);
+		// Destroy all selected links...
+		for (int i = 0; i < vItems.Size(); ++i)
+		{
+			CDDELink* pLink = oDlg.GetLink(vItems[i]);
 
-	// Destroy the link.
-	App.m_pDDEConv->DestroyLink(pLink);
+			// Destroy the link.
+			App.m_pDDEConv->DestroyLink(pLink);
+		}
+
+		// Remove all selected links...
+		for (int i = vItems.Size()-1; i >= 0; --i)
+			oDlg.RemoveLink(vItems[i]);
+
+		UpdateUI();
+	}
 }
 
 /******************************************************************************
-** Method:		OnLinkFile()
+** Method:		OnLinkUnadviseAll()
 **
-** Description:	Link to items specified in a file.
+** Description:	Unlink all items.
 **
 ** Parameters:	None.
 **
@@ -482,7 +506,160 @@ void CAppCmds::OnLinkUnadvise()
 *******************************************************************************
 */
 
-void CAppCmds::OnLinkFile()
+void CAppCmds::OnLinkUnadviseAll()
+{
+	ASSERT(App.m_pDDEConv != NULL);
+
+	// Remove all links from links listview.
+	App.m_AppWnd.m_AppDlg.RemoveAllLinks();
+
+	CAutoBool oLock(&App.m_bInDDECall);
+
+	// Destroy all links.
+	App.m_pDDEConv->DestroyAllLinks();
+
+	UpdateUI();
+}
+
+/******************************************************************************
+** Method:		OnLinkReqValues()
+**
+** Description:	Request current values for unadvised links.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppCmds::OnLinkReqValues()
+{
+	ASSERT(App.m_pDDEConv != NULL);
+
+	CDDECltLinks vLinks;
+
+	App.m_pDDEConv->GetAllLinks(vLinks);
+
+	// For all links...
+	for (int i = 0; i < vLinks.Size(); ++i) 
+	{
+		CDDELink* pLink = vLinks[i];
+
+		try
+		{
+			CAutoBool oLock(&App.m_bInDDECall);
+
+			// Link not advised?
+			if (App.m_AppWnd.m_AppDlg.IsLinkUnadvised(pLink))
+			{
+				CDDEData oData = App.m_pDDEConv->Request(pLink->Item(), pLink->Format());
+
+				App.m_AppWnd.m_AppDlg.UpdateLink(pLink, oData.GetBuffer(), false);
+			}
+		}
+		catch (CDDEException& /*e*/)
+		{
+		}
+	}
+}
+
+/******************************************************************************
+** Method:		OnLinkCopy()
+**
+** Description:	Copy a link to the clipboard for the selected link.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppCmds::OnLinkCopyClipboard()
+{
+	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_AppWnd.m_AppDlg.IsLinkSelected());
+
+	// Shortcut to dialog.
+	CAppDlg& oDlg = App.m_AppWnd.m_AppDlg;
+
+	// Get selected link.
+	CDDELink* pLink = oDlg.GetFirstSelLink();
+
+	ASSERT(pLink != NULL);
+
+	// Copy to clipboard.
+	CDDELink::CopyLink(App.m_AppWnd.Handle(), pLink);
+}
+
+/******************************************************************************
+** Method:		OnLinkCopyItem()
+**
+** Description:	Copy a link to the Item field for the selected link.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppCmds::OnLinkCopyItem()
+{
+	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_AppWnd.m_AppDlg.IsLinkSelected());
+
+	// Shortcut to dialog.
+	CAppDlg& oDlg = App.m_AppWnd.m_AppDlg;
+
+	// Get selected link.
+	CDDELink* pLink = oDlg.GetFirstSelLink();
+
+	ASSERT(pLink != NULL);
+
+	// Copy to Item field.
+	oDlg.SetItemName(pLink->Item());
+}
+
+/******************************************************************************
+** Method:		OnLinkPasteItem()
+**
+** Description:	Paste a link from the clipboard into the "Item" control.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppCmds::OnLinkPasteItem()
+{
+	ASSERT(App.m_pDDEConv != NULL);
+
+	CString strService, strTopic, strItem;
+
+	// Copy "Item" only to view.
+	if (CDDELink::PasteLink(strService, strTopic, strItem))
+		App.m_AppWnd.m_AppDlg.SetItemName(strItem);
+
+	UpdateUI();
+}
+
+/******************************************************************************
+** Method:		OnLinkOpenFile()
+**
+** Description:	Load links from a file.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppCmds::OnLinkOpenFile()
 {
 	ASSERT(App.m_pDDEConv != NULL);
 
@@ -557,6 +734,112 @@ void CAppCmds::OnLinkFile()
 	// Report any errors.
 	if (nErrors > 0)
 		App.AlertMsg("Failed to create %d links.", nErrors);
+
+	UpdateUI();
+}
+
+/******************************************************************************
+** Method:		OnLinkSaveFile()
+**
+** Description:	Save links to a file.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppCmds::OnLinkSaveFile()
+{
+	ASSERT(App.m_pDDEConv != NULL);
+
+	CPath strPath;
+
+	// Select the filename.
+	if (!strPath.Select(App.m_AppWnd, CPath::SaveFile, szTXTExts, szTXTDefExt, App.m_strLastFolder))
+		return;
+
+	try
+	{
+		CFile oFile;
+
+		// Open, for reading.
+		oFile.Create(strPath);
+
+		// Write header.
+		oFile.WriteLine(CString::Fmt("# %s|%s", App.m_pDDEConv->Service(), App.m_pDDEConv->Topic()));
+
+		// For all links...
+		for (int i = 0; i < App.m_pDDEConv->NumLinks(); ++i)
+			oFile.WriteLine(App.m_pDDEConv->GetLink(i)->Item());
+
+		// Close.
+		oFile.Close();
+
+		// Remember folder used.
+		App.m_strLastFolder = strPath.Directory();
+	}
+	catch(CFileException& e)
+	{
+		// Notify user.
+		App.AlertMsg(e.ErrorText());
+		return;
+	}
+}
+
+/******************************************************************************
+** Method:		OnLinkShowValue()
+**
+** Description:	Display the full value for the last advise on the first
+**				selected link.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppCmds::OnLinkShowValue()
+{
+	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_AppWnd.m_AppDlg.IsLinkSelected());
+
+	// Shortcut to dialog.
+	CAppDlg& oDlg = App.m_AppWnd.m_AppDlg;
+
+	// Get selected link.
+	CDDELink* pLink = oDlg.GetFirstSelLink();
+
+	ASSERT(pLink != NULL);
+
+	CFullValueDlg Dlg;
+
+	Dlg.m_strItem = pLink->Item();
+	Dlg.m_oValue  = oDlg.GetLinkLastValue(pLink);
+
+	// Show the dialog.
+	Dlg.RunModal(App.m_rMainWnd);
+}
+
+/******************************************************************************
+** Method:		OnOptionsPrefs()
+**
+** Description:	Show the settings dialog.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppCmds::OnOptionsPrefs()
+{
+	CPrefsDlg Dlg;
+
+	Dlg.RunModal(App.m_rMainWnd);
 }
 
 /******************************************************************************
@@ -594,10 +877,7 @@ void CAppCmds::UpdateUI()
 {
 	bool bConvOpen = (App.m_pDDEConv != NULL);
 
-	App.m_AppWnd.m_AppDlg.m_ebItem.ReadOnly(!bConvOpen);
-	App.m_AppWnd.m_AppDlg.m_cbFormat.Enable(bConvOpen);
-	App.m_AppWnd.m_AppDlg.m_ebValue.ReadOnly(!bConvOpen);
-	App.m_AppWnd.m_AppDlg.m_lvLinks.Enable(bConvOpen);
+	App.m_AppWnd.m_AppDlg.EnableUI(bConvOpen);
 
 	// Invoke specific commmand handlers.
 	CCmdControl::UpdateUI();
@@ -658,14 +938,69 @@ void CAppCmds::OnUILinkAdvise()
 void CAppCmds::OnUILinkUnadvise()
 {
 	bool bConvOpen = (App.m_pDDEConv != NULL);
-	bool bLinkSeln = (App.m_AppWnd.m_AppDlg.m_lvLinks.IsSelection());
+	bool bLinkSeln = (App.m_AppWnd.m_AppDlg.IsLinkSelected());
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_UNADVISE, bConvOpen && bLinkSeln);
 }
 
-void CAppCmds::OnUILinkFile()
+void CAppCmds::OnUILinkUnadviseAll()
+{
+	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bAnyLinks = ((bConvOpen) && (App.m_pDDEConv->NumLinks() > 0));
+
+	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_UNADVISE_ALL, bConvOpen && bAnyLinks);
+}
+
+void CAppCmds::OnUILinkReqValues()
+{
+	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bAnyLinks = ((bConvOpen) && (App.m_pDDEConv->NumLinks() > 0));
+
+	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_REQ_VALUES, bConvOpen && bAnyLinks);
+}
+
+void CAppCmds::OnUILinkCopyClipboard()
+{
+	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bLinkSeln = (App.m_AppWnd.m_AppDlg.IsLinkSelected());
+
+	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_COPY_CLIPBOARD, bConvOpen && bLinkSeln);
+}
+
+void CAppCmds::OnUILinkCopyItem()
+{
+	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bLinkSeln = (App.m_AppWnd.m_AppDlg.IsLinkSelected());
+
+	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_COPY_ITEM, bConvOpen && bLinkSeln);
+}
+
+void CAppCmds::OnUILinkPasteItem()
 {
 	bool bConvOpen = (App.m_pDDEConv != NULL);
 
-	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_FILE, bConvOpen);
+	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_PASTE_ITEM, bConvOpen);
+}
+
+void CAppCmds::OnUILinkOpenFile()
+{
+	bool bConvOpen = (App.m_pDDEConv != NULL);
+
+	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_OPEN_FILE, bConvOpen);
+}
+
+void CAppCmds::OnUILinkSaveFile()
+{
+	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bAnyLinks = ((bConvOpen) && (App.m_pDDEConv->NumLinks() > 0));
+
+	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_SAVE_FILE, bConvOpen && bAnyLinks);
+}
+
+void CAppCmds::OnUILinkShowValue()
+{
+	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bLinkSeln = (App.m_AppWnd.m_AppDlg.IsLinkSelected());
+
+	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_SHOW_VALUE, bConvOpen && bLinkSeln);
 }
