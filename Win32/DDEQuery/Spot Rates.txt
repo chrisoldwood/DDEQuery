@@ -1,5 +1,5 @@
 #
-# Spot Rates.
+# Spot Rates (For REUTER|IDN).
 #
 AUD=,BID ASK
 CAD=,BID ASK
