@@ -50,6 +50,7 @@ CDDEQueryApp::CDDEQueryApp()
 	: CApp(m_AppWnd, m_AppCmds)
 	, m_pDDEClient(CDDEClient::Instance())
 	, m_pDDEConv(NULL)
+	, m_bInDDECall(false)
 {
 
 }
@@ -68,7 +69,7 @@ CDDEQueryApp::CDDEQueryApp()
 
 CDDEQueryApp::~CDDEQueryApp()
 {
-
+	ASSERT(!m_bInDDECall);
 }
 
 /******************************************************************************
@@ -223,7 +224,7 @@ void CDDEQueryApp::OnDisconnect(CDDECltConv* /*pConv*/)
 	m_AppCmds.OnServerDisconnect();
 
 	// Notify user.
-	AlertMsg("Connection to DDE server severed.");
+	AlertMsg("Lost connection to DDE server.");
 }
 
 /******************************************************************************

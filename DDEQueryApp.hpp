@@ -42,6 +42,8 @@ public:
 	CDDEClient*		m_pDDEClient;		// DDE Client.
 	CDDECltConv*	m_pDDEConv;			// Current conversation.
 
+	bool			m_bInDDECall;		// Inside a DDE call?
+
 	//
 	// Constants.
 	//
