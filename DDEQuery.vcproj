@@ -269,6 +269,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\BinaryViewDlg.cpp">
+			</File>
+			<File
 				RelativePath="ConnectDlg.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -327,6 +330,15 @@
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\FullValueDlg.cpp">
+			</File>
+			<File
+				RelativePath=".\PrefsDlg.cpp">
+			</File>
+			<File
+				RelativePath=".\TextViewDlg.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -350,13 +362,25 @@
 				RelativePath="AppWnd.hpp">
 			</File>
 			<File
+				RelativePath=".\BinaryViewDlg.hpp">
+			</File>
+			<File
 				RelativePath="ConnectDlg.hpp">
 			</File>
 			<File
 				RelativePath="DDEQueryApp.hpp">
 			</File>
 			<File
+				RelativePath=".\FullValueDlg.hpp">
+			</File>
+			<File
+				RelativePath=".\PrefsDlg.hpp">
+			</File>
+			<File
 				RelativePath="Resource.h">
+			</File>
+			<File
+				RelativePath=".\TextViewDlg.hpp">
 			</File>
 		</Filter>
 		<Filter
@@ -367,6 +391,9 @@
 			</File>
 			<File
 				RelativePath="App.rcv">
+			</File>
+			<File
+				RelativePath=".\ListIcons.bmp">
 			</File>
 			<File
 				RelativePath="Toolbar.bmp">
