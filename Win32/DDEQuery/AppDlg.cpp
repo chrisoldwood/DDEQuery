@@ -103,11 +103,22 @@ void CAppDlg::OnInitDialog()
 
 void CAppDlg::AddLink(CDDELink* pLink)
 {
+	// Add the new link.
 	int n = m_lvLinks.AppendItem(pLink->Item());
 
 	m_lvLinks.ItemText(n, 1, "(none)");
 	m_lvLinks.ItemText(n, 2, "(none)");
 	m_lvLinks.ItemPtr (n,    pLink);
+
+	// Duplicate link?
+	if (m_lvLinks.FindItem(pLink) != n)
+	{
+		int o = m_lvLinks.FindItem(pLink);
+
+		// Copy value from 1st link.
+		m_lvLinks.ItemText(n, 1, m_lvLinks.ItemText(o, 1));
+		m_lvLinks.ItemText(n, 2, m_lvLinks.ItemText(o, 2));
+	}
 }
 
 /******************************************************************************
@@ -115,7 +126,8 @@ void CAppDlg::AddLink(CDDELink* pLink)
 **
 ** Description:	Update the specified link.
 **
-** Parameters:	None.
+** Parameters:	pLink		The link.
+**				srtValue	The new value.
 **
 ** Returns:		Nothing.
 **
@@ -156,7 +168,14 @@ void CAppDlg::RemoveLink(int nItem)
 {
 	ASSERT(nItem != LB_ERR);
 
+	// Save current selection.
+	int nSel = m_lvLinks.Selection();
+
 	m_lvLinks.DeleteItem(nItem);
+
+	// If just deleted, adjust selected item.
+	if (nSel == nItem)
+		m_lvLinks.Select(nSel);
 }
 
 /******************************************************************************
