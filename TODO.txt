@@ -4,10 +4,6 @@
 
 - Save links to file for reuse.
 
-- FIX: Multiple links on same item don't update.
-
-- Disable UI when not connected.
-
 - Advise indicator.
 
 - Advise column sorting.
