@@ -28,11 +28,13 @@ CDDEQueryApp App;
 */
 
 #ifdef _DEBUG
-const char* CDDEQueryApp::VERSION      = "v1.0 [Debug]";
+const char* CDDEQueryApp::VERSION      = "v1.5 Beta [Debug]";
 #else
-const char* CDDEQueryApp::VERSION      = "v1.0";
+const char* CDDEQueryApp::VERSION      = "v1.5 Beta";
 #endif
-const char* CDDEQueryApp::INI_FILE_VER = "1.0";
+const char* CDDEQueryApp::INI_FILE_VER_10 = "1.0";
+const char* CDDEQueryApp::INI_FILE_VER_15 = "1.5";
+const uint  CDDEQueryApp::DEF_FLASH_TIME  = 1000;
 
 /******************************************************************************
 ** Method:		Constructor
@@ -50,6 +52,7 @@ CDDEQueryApp::CDDEQueryApp()
 	: CApp(m_AppWnd, m_AppCmds)
 	, m_strLastFolder(CPath::ApplicationDir())
 	, m_oMRUList(5)
+	, m_nFlashTime(DEF_FLASH_TIME)
 	, m_pDDEClient(CDDEClient::Instance())
 	, m_pDDEConv(NULL)
 	, m_bInDDECall(false)
@@ -168,21 +171,32 @@ bool CDDEQueryApp::OnClose()
 void CDDEQueryApp::LoadConfig()
 {
 	// Read the file version.
-	CString strVer = m_oIniFile.ReadString("Version", "Version", INI_FILE_VER);
+	CString strVer = m_oIniFile.ReadString("Version", "Version", INI_FILE_VER_15);
+
+	// Fix-up old .ini file settings.
+	if (strVer == INI_FILE_VER_10)
+	{
+		// Read the window pos and size.
+		m_rcLastPos.left   = m_oIniFile.ReadInt("UI", "Left",   0);
+		m_rcLastPos.top    = m_oIniFile.ReadInt("UI", "Top",    0);
+		m_rcLastPos.right  = m_oIniFile.ReadInt("UI", "Right",  0);
+		m_rcLastPos.bottom = m_oIniFile.ReadInt("UI", "Bottom", 0);
+	}
 
 	// Read the MRU settings.
 	m_strLastService = m_oIniFile.ReadString("Main", "LastService", m_strLastService);
 	m_strLastTopic   = m_oIniFile.ReadString("Main", "LastTopic",   m_strLastTopic  );
 	m_strLastFolder  = m_oIniFile.ReadString("Main", "LastFolder",  m_strLastFolder );
 
-	// Read the window pos and size.
-	m_rcLastPos.left   = m_oIniFile.ReadInt("UI", "Left",   0);
-	m_rcLastPos.top    = m_oIniFile.ReadInt("UI", "Top",    0);
-	m_rcLastPos.right  = m_oIniFile.ReadInt("UI", "Right",  0);
-	m_rcLastPos.bottom = m_oIniFile.ReadInt("UI", "Bottom", 0);
+	// Read the window last positions.
+	m_rcLastPos      = m_oIniFile.ReadRect("UI", "MainWindow", m_rcLastPos);
+	m_rcFullValueDlg = m_oIniFile.ReadRect("UI", "FullValue",  m_rcFullValueDlg);
 
 	// Load MRU list.
 	m_oMRUList.Load(m_oIniFile);
+
+	// Load advise settings.
+	m_nFlashTime = m_oIniFile.ReadInt("UI", "FlashTime", m_nFlashTime);
 }
 
 /******************************************************************************
@@ -199,8 +213,17 @@ void CDDEQueryApp::LoadConfig()
 
 void CDDEQueryApp::SaveConfig()
 {
+	// Delete old settings, if old format file.
+	if (m_oIniFile.ReadString("Version", "Version", INI_FILE_VER_15) == INI_FILE_VER_10)
+	{
+		m_oIniFile.DeleteEntry("UI", "Left");
+		m_oIniFile.DeleteEntry("UI", "Top");
+		m_oIniFile.DeleteEntry("UI", "Right");
+		m_oIniFile.DeleteEntry("UI", "Bottom");
+	}
+
 	// Write the file version.
-	m_oIniFile.WriteString("Version", "Version", INI_FILE_VER);
+	m_oIniFile.WriteString("Version", "Version", INI_FILE_VER_15);
 
 	// Write the MRU settings.
 	m_oIniFile.WriteString("Main", "LastService", m_strLastService);
@@ -208,13 +231,14 @@ void CDDEQueryApp::SaveConfig()
 	m_oIniFile.WriteString("Main", "LastFolder",  m_strLastFolder );
 
 	// Write the window pos and size.
-	m_oIniFile.WriteInt("UI", "Left",   m_rcLastPos.left  );
-	m_oIniFile.WriteInt("UI", "Top",    m_rcLastPos.top   );
-	m_oIniFile.WriteInt("UI", "Right",  m_rcLastPos.right );
-	m_oIniFile.WriteInt("UI", "Bottom", m_rcLastPos.bottom);
+	m_oIniFile.WriteRect("UI", "MainWindow", m_rcLastPos);
+	m_oIniFile.WriteRect("UI", "FullValue",  m_rcFullValueDlg);
 
 	// Save MRU list.
 	m_oMRUList.Save(m_oIniFile);
+
+	// Save advise settings.
+	m_oIniFile.WriteInt("UI", "FlashTime", m_nFlashTime);
 }
 
 /******************************************************************************
@@ -260,11 +284,11 @@ void CDDEQueryApp::OnAdvise(CDDELink* pLink, const CDDEData* pData)
 {
 	ASSERT(pLink->Conversation() == m_pDDEConv);
 
-	CString strData;
+	CBuffer oData;
 
 	// Get value, if set.
 	if (pData != NULL)
-		strData = pData->GetString();
+		oData = pData->GetBuffer();
 
-	m_AppWnd.m_AppDlg.UpdateLink(pLink, strData);
+	m_AppWnd.m_AppDlg.UpdateLink(pLink, oData, true);
 }

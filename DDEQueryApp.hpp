@@ -40,6 +40,8 @@ public:
 	CString			m_strLastTopic;		// Last topic used.
 	CPath			m_strLastFolder;	// The last folder used.
 	CMRUList		m_oMRUList;			// The MRU list of conversations.
+	uint			m_nFlashTime;		// Advise indicator "on" time.
+	CRect			m_rcFullValueDlg;	// Last window size of "Full Value" dialog.
 
 	CDDEClient*		m_pDDEClient;		// DDE Client.
 	CDDECltConv*	m_pDDEConv;			// Current conversation.
@@ -67,7 +69,9 @@ protected:
 	//
 	// Constants.
 	//
-	static const char* INI_FILE_VER;
+	static const char* INI_FILE_VER_10;
+	static const char* INI_FILE_VER_15;
+	static const uint  DEF_FLASH_TIME;
 
 	//
 	// IDDEClientListener methods.
