@@ -115,6 +115,8 @@ void CAppCmds::OnServerConnect()
 
 void CAppCmds::OnServerDisconnect()
 {
+	ASSERT(!App.m_bInDDECall);
+
 	// Conversation open?
 	if (App.m_pDDEConv != NULL)
 	{
@@ -196,12 +198,12 @@ void CAppCmds::OnServerConnect(const CString& strService, const CString& strTopi
 
 	try
 	{
-		CAutoBool   oLock(&App.m_bInDDECall);
-
 		// Close existing conversation.
 		OnServerDisconnect();
 
 		ASSERT(App.m_pDDEConv == NULL);
+
+		CAutoBool oLock(&App.m_bInDDECall);
 
 		// Create conversation.
 		App.m_pDDEConv = App.m_pDDEClient->CreateConversation(strService, strTopic);
@@ -443,16 +445,19 @@ void CAppCmds::OnLinkUnadvise()
 
 void CAppCmds::OnLinkFile()
 {
+	ASSERT(App.m_pDDEConv != NULL);
+
 	CPath strPath;
 
 	// Select the filename.
 	if (!strPath.Select(App.m_AppWnd, CPath::OpenFile, szTXTExts, szTXTDefExt, App.m_strLastFolder))
 		return;
 
+	CStrArray astrLinks;
+
 	try
 	{
 		CFile oFile;
-		uint  nErrors = 0;
 
 		// Open, for reading.
 		oFile.Open(strPath, GENERIC_READ);
@@ -465,29 +470,12 @@ void CAppCmds::OnLinkFile()
 			// Ignore empty lines and comments.
 			if ((strLine == "") || (strLine[0] == '#') || (strLine[0] == ';'))
 				continue;
-			
-			try
-			{
-				CAutoBool oLock(&App.m_bInDDECall);
 
-				// Create the link.
-				CDDELink* pLink = App.m_pDDEConv->CreateLink(strLine);
-
-				// Add to the links listview.
-				App.m_AppWnd.m_AppDlg.AddLink(pLink);
-			}
-			catch(CDDEException& /*e*/)
-			{
-				++nErrors;
-			}
+			astrLinks.Add(strLine);
 		}
 
 		// Close.
 		oFile.Close();
-
-		// Report any errors.
-		if (nErrors > 0)
-			App.AlertMsg("Failed to create %d links.", nErrors);
 
 		// Remember folder used.
 		App.m_strLastFolder = strPath.Directory();
@@ -496,7 +484,41 @@ void CAppCmds::OnLinkFile()
 	{
 		// Notify user.
 		App.AlertMsg(e.ErrorText());
+		return;
 	}
+
+	uint nErrors = astrLinks.Size();
+
+	// Create links...
+	for (int i = 0; i < astrLinks.Size(); ++i)
+	{
+		// Conversation terminated?
+		if (App.m_pDDEConv == NULL)
+		{
+			App.AlertMsg("Lost connection to DDE server.");
+			return;
+		}
+
+		try
+		{
+			CAutoBool oLock(&App.m_bInDDECall);
+
+			// Create the link.
+			CDDELink* pLink = App.m_pDDEConv->CreateLink(astrLinks[i]);
+
+			// Add to the links listview.
+			App.m_AppWnd.m_AppDlg.AddLink(pLink);
+
+			--nErrors;
+		}
+		catch(CDDEException& /*e*/)
+		{
+		}
+	}
+
+	// Report any errors.
+	if (nErrors > 0)
+		App.AlertMsg("Failed to create %d links.", nErrors);
 }
 
 /******************************************************************************
