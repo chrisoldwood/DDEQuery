@@ -38,6 +38,7 @@ public:
 	CRect			m_rcLastPos;		// Main window position.
 	CString			m_strLastService;	// Last service used.
 	CString			m_strLastTopic;		// Last topic used.
+	CMRUList		m_oMRUList;			// The MRU list of conversations.
 
 	CDDEClient*		m_pDDEClient;		// DDE Client.
 	CDDECltConv*	m_pDDEConv;			// Current conversation.

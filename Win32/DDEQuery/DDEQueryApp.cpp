@@ -48,6 +48,7 @@ const char* CDDEQueryApp::INI_FILE_VER = "1.0";
 
 CDDEQueryApp::CDDEQueryApp()
 	: CApp(m_AppWnd, m_AppCmds)
+	, m_oMRUList(5)
 	, m_pDDEClient(CDDEClient::Instance())
 	, m_pDDEConv(NULL)
 	, m_bInDDECall(false)
@@ -110,6 +111,9 @@ bool CDDEQueryApp::OnOpen()
 	// Create the main window.
 	if (!m_AppWnd.Create())
 		return false;
+
+	// Initialise the MRU list.
+	m_oMRUList.UpdateMenu(*m_AppWnd.Menu(), ID_SERVER_MRU_1);
 
 	// Show it.
 	if ( (m_iCmdShow == SW_SHOWNORMAL) && (m_rcLastPos.Empty() == false) )
@@ -174,6 +178,9 @@ void CDDEQueryApp::LoadConfig()
 	m_rcLastPos.top    = m_oIniFile.ReadInt("UI", "Top",    0);
 	m_rcLastPos.right  = m_oIniFile.ReadInt("UI", "Right",  0);
 	m_rcLastPos.bottom = m_oIniFile.ReadInt("UI", "Bottom", 0);
+
+	// Load MRU list.
+	m_oMRUList.Load(m_oIniFile);
 }
 
 /******************************************************************************
@@ -202,6 +209,9 @@ void CDDEQueryApp::SaveConfig()
 	m_oIniFile.WriteInt("UI", "Top",    m_rcLastPos.top   );
 	m_oIniFile.WriteInt("UI", "Right",  m_rcLastPos.right );
 	m_oIniFile.WriteInt("UI", "Bottom", m_rcLastPos.bottom);
+
+	// Save MRU list.
+	m_oMRUList.Save(m_oIniFile);
 }
 
 /******************************************************************************
