@@ -52,6 +52,7 @@
 #define IDC_PASTE_LINK                  1095
 #define IDC_FLASH_TIME                  1096
 #define IDC_VIEWS                       1097
+#define IDC_DDE_TIMEOUT                 1097
 #define IDD_MAIN                        5000
 #define IDD_ABOUT                       5001
 #define IDD_CONNECT                     5002

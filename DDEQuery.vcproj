@@ -359,6 +359,9 @@
 				RelativePath="AppToolBar.hpp">
 			</File>
 			<File
+				RelativePath=".\AppTypes.hpp">
+			</File>
+			<File
 				RelativePath="AppWnd.hpp">
 			</File>
 			<File
