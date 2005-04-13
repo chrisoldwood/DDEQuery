@@ -1,7 +1,0 @@
-- Simple script support.
-
-- Fix bug in OnLinkAdvise() which assumes CF_TEXT.
-
-- Move GetDisplayValue() to App object and pass in Format (Text, Unicode, Binary).
-
-- Add support (+in prefs dialog) for defining custom formats.
