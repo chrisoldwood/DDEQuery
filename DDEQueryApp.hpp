@@ -42,11 +42,18 @@ public:
 	CMRUList		m_oMRUList;			// The MRU list of conversations.
 	uint			m_nFlashTime;		// Advise indicator "on" time.
 	CRect			m_rcFullValueDlg;	// Last window size of "Full Value" dialog.
+	DWORD			m_dwDDETimeOut;		// DDE call timeout.
 
 	CDDEClient*		m_pDDEClient;		// DDE Client.
 	CDDECltConv*	m_pDDEConv;			// Current conversation.
 
 	bool			m_bInDDECall;		// Inside a DDE call?
+
+	//
+	// Format/Value helper methods.
+	//
+	FmtType GetFormatType(uint nFormat);
+	CString GetDisplayValue(const CBuffer& oValue, uint nFormat, bool bSimple);
 
 	//
 	// Constants.
@@ -72,6 +79,7 @@ protected:
 	static const char* INI_FILE_VER_10;
 	static const char* INI_FILE_VER_15;
 	static const uint  DEF_FLASH_TIME;
+	static const DWORD DEF_DDE_TIMEOUT;
 
 	//
 	// IDDEClientListener methods.

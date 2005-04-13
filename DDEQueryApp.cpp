@@ -9,6 +9,7 @@
 */
 
 #include "AppHeaders.hpp"
+#include <atlconv.h>
 
 /******************************************************************************
 **
@@ -35,6 +36,7 @@ const char* CDDEQueryApp::VERSION      = "v1.5 Beta";
 const char* CDDEQueryApp::INI_FILE_VER_10 = "1.0";
 const char* CDDEQueryApp::INI_FILE_VER_15 = "1.5";
 const uint  CDDEQueryApp::DEF_FLASH_TIME  = 1000;
+const DWORD CDDEQueryApp::DEF_DDE_TIMEOUT = 30000;
 
 /******************************************************************************
 ** Method:		Constructor
@@ -53,6 +55,7 @@ CDDEQueryApp::CDDEQueryApp()
 	, m_strLastFolder(CPath::ApplicationDir())
 	, m_oMRUList(5)
 	, m_nFlashTime(DEF_FLASH_TIME)
+	, m_dwDDETimeOut(DEF_DDE_TIMEOUT)
 	, m_pDDEClient(CDDEClient::Instance())
 	, m_pDDEConv(NULL)
 	, m_bInDDECall(false)
@@ -192,7 +195,10 @@ void CDDEQueryApp::LoadConfig()
 	m_rcLastPos      = m_oIniFile.ReadRect("UI", "MainWindow", m_rcLastPos);
 	m_rcFullValueDlg = m_oIniFile.ReadRect("UI", "FullValue",  m_rcFullValueDlg);
 
-	// Load MRU list.
+	// Load DDE settings.
+	m_dwDDETimeOut = m_oIniFile.ReadUInt("DDE", "TimeOut", m_dwDDETimeOut);
+
+	// Load MRU conversation list.
 	m_oMRUList.Load(m_oIniFile);
 
 	// Load advise settings.
@@ -234,7 +240,10 @@ void CDDEQueryApp::SaveConfig()
 	m_oIniFile.WriteRect("UI", "MainWindow", m_rcLastPos);
 	m_oIniFile.WriteRect("UI", "FullValue",  m_rcFullValueDlg);
 
-	// Save MRU list.
+	// Save DDE settings.
+	m_oIniFile.WriteUInt("DDE", "TimeOut", m_dwDDETimeOut);
+
+	// Save MRU conversation list.
 	m_oMRUList.Save(m_oIniFile);
 
 	// Save advise settings.
@@ -291,4 +300,128 @@ void CDDEQueryApp::OnAdvise(CDDELink* pLink, const CDDEData* pData)
 		oData = pData->GetBuffer();
 
 	m_AppWnd.m_AppDlg.UpdateLink(pLink, oData, true);
+}
+
+/******************************************************************************
+** Method:		GetFormatType()
+**
+** Description:	Gets the basic type of the clipboard format.
+**
+** Parameters:	nFormat		The values' format.
+**
+** Returns:		The type.
+**
+*******************************************************************************
+*/
+
+FmtType CDDEQueryApp::GetFormatType(uint nFormat)
+{
+	// Standard Windows format?
+	if (CClipboard::IsStdFormat(nFormat))
+	{
+		switch (nFormat)
+		{
+			case CF_TEXT:			return CF_TYPE_ANSI;
+			case CF_BITMAP:			return CF_TYPE_BINARY;
+			case CF_METAFILEPICT:	return CF_TYPE_BINARY;
+			case CF_SYLK:			return CF_TYPE_ANSI;
+			case CF_DIF:			return CF_TYPE_ANSI;
+			case CF_TIFF:			return CF_TYPE_BINARY;
+			case CF_OEMTEXT:		return CF_TYPE_ANSI;
+			case CF_DIB:			return CF_TYPE_BINARY;
+			case CF_PALETTE:		return CF_TYPE_BINARY;
+			case CF_PENDATA:		return CF_TYPE_BINARY;
+			case CF_RIFF:			return CF_TYPE_BINARY;
+			case CF_WAVE:			return CF_TYPE_BINARY;
+			case CF_UNICODETEXT:	return CF_TYPE_UNICODE;
+			case CF_ENHMETAFILE:	return CF_TYPE_BINARY;
+			case CF_HDROP:			return CF_TYPE_BINARY;
+			case CF_LOCALE:			return CF_TYPE_BINARY;
+			case CF_DIBV5:			return CF_TYPE_BINARY;
+			default:				ASSERT_FALSE();
+		}
+	}
+	// Custom format?
+	else
+	{
+	}
+
+	// By default, assume binary.
+	return CF_TYPE_BINARY;
+}
+
+/******************************************************************************
+** Method:		GetDisplayValue()
+**
+** Description:	Convert the buffer data into a text value for display.
+**
+** Parameters:	oValue		The value.
+**				nFormat		The values' format.
+**				bSimple		Simple conversion?
+**
+** Returns:		The value as text.
+**
+*******************************************************************************
+*/
+
+CString CDDEQueryApp::GetDisplayValue(const CBuffer& oValue, uint nFormat, bool bSimple)
+{
+	CString strValue = "";
+
+	// Empty value?
+	if (oValue.Size() == 0)
+		return strValue;
+
+	FmtType eType = GetFormatType(nFormat);
+
+	// Simple ANSI text?
+	if (eType == CF_TYPE_ANSI)
+	{
+		strValue = oValue.ToString();
+	}
+	// Unicode text?
+	else if (eType == CF_TYPE_UNICODE)
+	{
+		USES_CONVERSION;
+
+		strValue = W2A((const wchar_t*)oValue.Buffer());
+	}
+	// Binary.
+	else
+	{
+		// Single-line display?
+		if (bSimple)
+		{
+			strValue.Format("(%u bytes)", oValue.Size());
+		}
+		// Multi-line display.
+		else
+		{
+			char* pszValue = (char*) alloca(oValue.Size()+1);
+
+			// Copy value to temporary buffer.
+			memcpy(pszValue, static_cast<const char*>(oValue.Buffer()), oValue.Size());
+
+			// Convert non-printable chars.
+			for (uint i = 0; i < oValue.Size(); ++i)
+			{
+				uchar cChar = pszValue[i];
+
+				// Non-printable AND also NOT Tab/CR/LF?
+				if ( (!isprint(cChar)) && (cChar != '\t') && (cChar != '\r') && (cChar != '\n') )
+				{
+					// Replace, unless it looks like an EOS marker.
+					if ( (cChar != '\0') || (i != (oValue.Size()-1)) )
+						pszValue[i] = '.';
+				}
+			}
+
+			// Terminate string.
+			pszValue[oValue.Size()] = '\0';
+
+			strValue = pszValue;
+		}
+	}
+
+	return strValue;
 }
