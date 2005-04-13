@@ -31,6 +31,7 @@ public:
 	// Members.
 	//
 	CBuffer*	m_pValue;
+	uint*		m_pFormat;
 	
 protected:
 	//
@@ -43,11 +44,11 @@ protected:
 	//
 	virtual void OnInitDialog();
 	virtual void OnCtlColour(uint nCtlClrMsg, HDC hDC, HWND hCtlWnd);
+	        void OnValueSetFocus();
 
 	//
 	// Internal methods.
 	//
-	void DisplayValue();
 };
 
 /******************************************************************************

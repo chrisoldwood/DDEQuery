@@ -31,12 +31,14 @@
 CTextViewDlg::CTextViewDlg()
 	: CDialog(IDD_TEXT_VIEW)
 	, m_pValue(NULL)
+	, m_pFormat(NULL)
 {
 	DEFINE_CTRL_TABLE
 		CTRL(IDC_VALUE, &m_ebValue)
 	END_CTRL_TABLE
 
 	DEFINE_CTRLMSG_TABLE
+		CMD_CTRLMSG(IDC_VALUE, EN_SETFOCUS, OnValueSetFocus)
 	END_CTRLMSG_TABLE
 
 	DEFINE_GRAVITY_TABLE
@@ -58,7 +60,8 @@ CTextViewDlg::CTextViewDlg()
 
 void CTextViewDlg::OnInitDialog()
 {
-	ASSERT(m_pValue != NULL);
+	ASSERT(m_pValue  != NULL);
+	ASSERT(m_pFormat != NULL);
 
 	// Tab stops are in dialog units.
 	const uint DLG_CHAR_WIDTH = 4;
@@ -69,7 +72,7 @@ void CTextViewDlg::OnInitDialog()
 	m_ebValue.TabWidth(CHARS_PER_TAB*DLG_CHAR_WIDTH);
 
 	// Display value.
-	DisplayValue();
+	m_ebValue.Text(App.GetDisplayValue(*m_pValue, *m_pFormat, false));
 }
 
 /******************************************************************************
@@ -108,9 +111,10 @@ void CTextViewDlg::OnCtlColour(uint nCtlClrMsg, HDC hDC, HWND hCtlWnd)
 }
 
 /******************************************************************************
-** Method:		DisplayValue()
+** Method:		OnValueSetFocus()
 **
-** Description:	Display the buffer as a text string.
+** Description:	Focus moved to value edit box - disable the selection of all
+**				text in the window.
 **
 ** Parameters:	None.
 **
@@ -119,8 +123,8 @@ void CTextViewDlg::OnCtlColour(uint nCtlClrMsg, HDC hDC, HWND hCtlWnd)
 *******************************************************************************
 */
 
-void CTextViewDlg::DisplayValue()
+void CTextViewDlg::OnValueSetFocus()
 {
-	// Simple conversion for now.
-	m_ebValue.Text(m_pValue->ToString());
+	// Remove any selection.
+	m_ebValue.Select(-1, 0);
 }
