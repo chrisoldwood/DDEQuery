@@ -35,6 +35,7 @@ public:
 	//
 	CString	m_strItem;
 	CBuffer	m_oValue;
+	uint	m_nFormat;
 	
 protected:
 	//

@@ -30,6 +30,7 @@
 
 CFullValueDlg::CFullValueDlg()
 	: CDialog(IDD_FULL_VALUE)
+	, m_nFormat(CF_TEXT)
 {
 	DEFINE_CTRL_TABLE
 		CTRL(IDC_VIEWS, &m_tcViews)
@@ -69,6 +70,7 @@ void CFullValueDlg::OnInitDialog()
 
 	// Attach value buffer to views.
 	m_dlgTextView.m_pValue   = &m_oValue;
+	m_dlgTextView.m_pFormat  = &m_nFormat;
 	m_dlgBinaryView.m_pValue = &m_oValue;
 
 	// Create views.
@@ -79,8 +81,8 @@ void CFullValueDlg::OnInitDialog()
 	m_tcViews.AddTab("Text",   m_dlgTextView);
 	m_tcViews.AddTab("Binary", m_dlgBinaryView);
 
-	// Display "Text" view by default.
-	m_tcViews.CurSel(0);
+	// Display default view.
+	m_tcViews.CurSel((App.GetFormatType(m_nFormat) == CF_TYPE_BINARY) ? 1 : 0);
 }
 
 /******************************************************************************
