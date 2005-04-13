@@ -30,6 +30,7 @@
 */
 
 #include "Resource.h"
+#include "AppTypes.hpp"
 
 // App data classes.
 

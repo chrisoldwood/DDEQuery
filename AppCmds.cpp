@@ -244,6 +244,8 @@ void CAppCmds::OnServerConnect(const CString& strService, const CString& strTopi
 		// Create conversation.
 		App.m_pDDEConv = App.m_pDDEClient->CreateConversation(strService, strTopic);
 
+		App.m_pDDEConv->SetTimeOut(App.m_dwDDETimeOut);
+
 		// Remember new settings.
 		App.m_strLastService = strService;
 		App.m_strLastTopic   = strTopic;
@@ -295,6 +297,14 @@ void CAppCmds::OnCommandRequest()
 		return;
 	}
 
+	// Invalid format?
+	if (nFormat == NULL)
+	{
+		App.AlertMsg("Invalid clipboard format.");
+		App.m_AppWnd.m_AppDlg.SetFormatFocus();
+		return;
+	}
+
 	try
 	{
 		CAutoBool oLock(&App.m_bInDDECall);
@@ -306,7 +316,7 @@ void CAppCmds::OnCommandRequest()
 		CDDEData oData = App.m_pDDEConv->Request(strItem, nFormat);
 
 		// Display value.
-		App.m_AppWnd.m_AppDlg.SetItemValue(oData.GetBuffer());
+		App.m_AppWnd.m_AppDlg.SetItemValue(oData.GetBuffer(), nFormat);
 	}
 	catch (CDDEException& e)
 	{
@@ -437,13 +447,21 @@ void CAppCmds::OnLinkAdvise()
 
 	// Get the DDE item.
 	CString strItem = App.m_AppWnd.m_AppDlg.GetItemName();
-	uint    nFormat = CF_TEXT;
+	uint    nFormat = App.m_AppWnd.m_AppDlg.GetSelFormat();
 
 	// Item provided?
 	if (strItem == "")
 	{
 		App.AlertMsg("Please provide the item name.");
 		App.m_AppWnd.m_AppDlg.SetItemFocus();
+		return;
+	}
+
+	// Invalid format?
+	if (nFormat == NULL)
+	{
+		App.AlertMsg("Invalid clipboard format.");
+		App.m_AppWnd.m_AppDlg.SetFormatFocus();
 		return;
 	}
 
@@ -859,6 +877,7 @@ void CAppCmds::OnLinkShowValue()
 
 	Dlg.m_strItem = pLink->Item();
 	Dlg.m_oValue  = oDlg.GetLinkLastValue(pLink);
+	Dlg.m_nFormat = pLink->Format();
 
 	// Show the dialog.
 	Dlg.RunModal(App.m_rMainWnd);
@@ -881,6 +900,10 @@ void CAppCmds::OnOptionsPrefs()
 	CPrefsDlg Dlg;
 
 	Dlg.RunModal(App.m_rMainWnd);
+
+	// Update conversation, if active.
+	if (App.m_pDDEConv != NULL)
+		App.m_pDDEConv->SetTimeOut(App.m_dwDDETimeOut);
 }
 
 /******************************************************************************
