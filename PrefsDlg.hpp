@@ -35,6 +35,7 @@ protected:
 	//
 	// Controls.
 	//
+	CDecimalBox	m_ebDDETimeOut;
 	CDecimalBox	m_ebFlashTime;
 
 	//
