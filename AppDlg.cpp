@@ -93,16 +93,12 @@ void CAppDlg::OnInitDialog()
 	m_lvLinks.InsertColumn(ADVISE_TIME,  "Updated",   150, LVCFMT_LEFT);
 	m_lvLinks.InsertColumn(ADVISE_COUNT, "# Advises", 100, LVCFMT_RIGHT);
 
-	// Register custom formats.
-	uint nXLTable = CClipboard::RegisterFormat("XlTable");
-
 	// Populate formats combo with text-based formats.
 	m_cbFormat.Add(CClipboard::FormatName(CF_TEXT),        CF_TEXT);
 	m_cbFormat.Add(CClipboard::FormatName(CF_SYLK),        CF_SYLK);
 	m_cbFormat.Add(CClipboard::FormatName(CF_DIF),         CF_DIF);
 	m_cbFormat.Add(CClipboard::FormatName(CF_OEMTEXT),     CF_OEMTEXT);
 	m_cbFormat.Add(CClipboard::FormatName(CF_UNICODETEXT), CF_UNICODETEXT);
-	m_cbFormat.Add(CClipboard::FormatName(nXLTable),       nXLTable);
 
 	// Select CF_TEXT by default.
 	m_cbFormat.CurSel(m_cbFormat.FindExact(CClipboard::FormatName(CF_TEXT)));
@@ -257,7 +253,7 @@ void CAppDlg::UpdateLink(CDDELink* pLink, const CBuffer& oValue, bool bIsAdvise)
 		uint nItem = vItems[i];
 
 		m_lvLinks.ItemImage(nItem, (bIsAdvise) ? IMG_FLASH : IMG_BLANK);
-		m_lvLinks.ItemText (nItem, LAST_VALUE,   GetDisplayValue(oValue));
+		m_lvLinks.ItemText (nItem, LAST_VALUE,   App.GetDisplayValue(oValue, pLink->Format(), true));
 		m_lvLinks.ItemText (nItem, ADVISE_TIME,  strTime );
 		m_lvLinks.ItemText (nItem, ADVISE_COUNT, strCount);
 	}
@@ -343,6 +339,60 @@ void CAppDlg::RemoveAllLinks()
 	m_lvLinks.DeleteAllItems();
 
 	UpdateTitle();
+}
+
+/******************************************************************************
+** Method:		GetSelFormat()
+**
+** Description:	Gets the selected clipboard format.
+**
+** Parameters:	None.
+**
+** Returns:		The format handle.
+**
+*******************************************************************************
+*/
+
+uint CAppDlg::GetSelFormat()
+{
+	uint nFormat = NULL;
+
+	// Standard format selected?
+	if (m_cbFormat.CurSel() != CB_ERR)
+		return m_cbFormat.ItemData(m_cbFormat.CurSel());
+
+	CString strFormat = m_cbFormat.Text();
+
+	// Standard format entered?
+	if ((nFormat = CClipboard::FormatHandle(strFormat)) != NULL)
+		return nFormat;
+
+	// Custom format.
+	return CClipboard::RegisterFormat(strFormat);
+}
+
+/******************************************************************************
+** Method:		SetItemValue()
+**
+** Description:	Sets the value edit box with the DDE result.
+**
+** Parameters:	oBuffer		The value.
+**				nFormat		The values' format.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppDlg::SetItemValue(const CBuffer& oBuffer, uint nFormat)
+{
+	m_ebValue.Text(App.GetDisplayValue(oBuffer, nFormat, true));
+
+	m_strLastItem = m_ebItem.Text();
+	m_oLastValue  = oBuffer;
+	m_nLastFormat = nFormat;
+
+	EnableFullValue(true);
 }
 
 /******************************************************************************
@@ -673,6 +723,7 @@ void CAppDlg::OnFullValue()
 
 	oDlg.m_strItem = m_strLastItem;
 	oDlg.m_oValue  = m_oLastValue;
+	oDlg.m_nFormat = m_nLastFormat;
 
 	oDlg.RunModal(*this);
 }
@@ -719,38 +770,4 @@ void CAppDlg::OnValueChanged()
 		m_strLastItem = "";
 		EnableFullValue(false);
 	}
-}
-
-/******************************************************************************
-** Method:		GetDisplayValue()
-**
-** Description:	Convert the buffer data into a text value for display.
-**
-** Parameters:	oValue.
-**
-** Returns:		The value as text.
-**
-*******************************************************************************
-*/
-
-CString CAppDlg::GetDisplayValue(const CBuffer& oValue)
-{
-	bool        bBinary = false;
-	const char* pBuffer = static_cast<const char*>(oValue.Buffer());
-	
-	// Check for non-printable chars.
-	for (uint i = 0; i < oValue.Size(); ++i)
-	{
-		uchar cChar = pBuffer[i];
-
-		// Non-printable AND also NOT Tab/CR/LF/EoS?
-		if ( (!isprint(cChar)) && (cChar != '\t') && (cChar != '\r')
-		  && (cChar != '\n') && (cChar != '\0') )
-		{
-			bBinary = true;
-			break;
-		}
-	}
-
-	return (!bBinary) ? oValue.ToString() : "(binary)";
 }

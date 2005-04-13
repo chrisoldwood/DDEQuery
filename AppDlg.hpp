@@ -35,9 +35,10 @@ public:
 	uint    GetSelFormat();
 
 	void SetItemName(const CString& strName);
-	void SetItemValue(const CBuffer& oBuffer);
+	void SetItemValue(const CBuffer& oBuffer, uint nFormat);
 
 	void SetItemFocus();
+	void SetFormatFocus();
 
 	void AddLink(CDDELink* pLink);
 	void UpdateLink(CDDELink* pLink, const CBuffer& oValue, bool bIsAdvise);
@@ -91,6 +92,7 @@ protected:
 	CLinksData	m_oLinksData;
 	CString		m_strLastItem;
 	CBuffer		m_oLastValue;
+	uint		m_nLastFormat;
 
 	//
 	// Controls.
@@ -146,7 +148,6 @@ protected:
 	//
 	void UpdateTitle();
 	void EnableFullValue(bool bEnable);
-	CString GetDisplayValue(const CBuffer& oValue);
 };
 
 /******************************************************************************
@@ -166,31 +167,19 @@ inline CString CAppDlg::GetItemValue()
 	return m_ebValue.Text();
 }
 
-inline uint CAppDlg::GetSelFormat()
-{
-	ASSERT(m_cbFormat.CurSel() != CB_ERR);
-
-	return m_cbFormat.ItemData(m_cbFormat.CurSel());
-}
-
 inline void CAppDlg::SetItemName(const CString& strName)
 {
 	m_ebItem.Text(strName);
 }
 
-inline void CAppDlg::SetItemValue(const CBuffer& oBuffer)
-{
-	m_ebValue.Text(GetDisplayValue(oBuffer));
-
-	m_strLastItem = m_ebItem.Text();
-	m_oLastValue  = oBuffer;
-
-	EnableFullValue(true);
-}
-
 inline void CAppDlg::SetItemFocus()
 {
 	m_ebItem.Focus();
+}
+
+inline void CAppDlg::SetFormatFocus()
+{
+	m_cbFormat.Focus();
 }
 
 inline bool CAppDlg::IsLinkSelected()
