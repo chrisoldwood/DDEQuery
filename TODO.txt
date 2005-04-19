@@ -1,0 +1,4 @@
+- Command line interface for scripting.
+  e.g. DDEQuery -c "REUTER|IDN" -r "GBP=,[BID,ASK]"
+  or DDEQuery -c "REUTER|IDN" -f RICList.txt
+  or DDEQuery -s Script.txt
