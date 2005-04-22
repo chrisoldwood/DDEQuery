@@ -1,3 +1,19 @@
+Version 1.5
+===========
+
+- Added support for requesting items using custom clipboard formats.
+- Added status bar indicator to show when inside a DDE call.
+- Added support for coping/pasting links to/from the clipboard.
+- Added context menu to the active links view.
+- Added support for requesting current values for unadvised links.
+- Added "advise" indicator for highlighting link updates.
+- Added support for opening a conversation based on a clipboard link.
+- Added application settings dialog.
+- Added support for displaying large values and binary data.
+- Fixed bug where links were always requested as CF_TEXT format.
+- Fixed bug where DDE links were not treated as case-insensitive.
+
+
 Version 1.0
 ===========
 
@@ -5,6 +21,4 @@ Version 1.0
 
 
 Chris Oldwood 
-(gort@cix.co.uk)
-
-22nd November 2004
+23rd April 2005
