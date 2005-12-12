@@ -242,15 +242,18 @@ void CAppDlg::UpdateLink(CDDELink* pLink, const CBuffer& oValue, bool bIsAdvise)
 	CString strTime  = pLinkData->m_dtLastAdvise.ToString();
 	CString strCount = CStrCvt::FormatInt(pLinkData->m_nAdviseCount);
 
+	//Template shorthands.
+	typedef CListView::CUIntArray::const_iterator CIter;
+
 	CListView::CUIntArray vItems;
 
 	// Find all items referencing the link.
 	m_lvLinks.FindAllItems(pLink, vItems);
 
 	// Update items.
-	for (int i = 0; i < vItems.Size(); ++i)
+	for (CIter oIter = vItems.begin(); oIter != vItems.end(); ++oIter)
 	{
-		uint nItem = vItems[i];
+		uint nItem = *oIter;
 
 		m_lvLinks.ItemImage(nItem, (bIsAdvise) ? IMG_FLASH : IMG_BLANK);
 		m_lvLinks.ItemText (nItem, LAST_VALUE,   App.GetDisplayValue(oValue, pLink->Format(), true));

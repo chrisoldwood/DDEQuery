@@ -508,6 +508,9 @@ void CAppCmds::OnLinkUnadvise()
 	ASSERT(App.m_pDDEConv != NULL);
 	ASSERT(App.m_AppWnd.m_AppDlg.IsLinkSelected());
 
+	//Template shorthands.
+	typedef CListView::CUIntArray::reverse_iterator CIter;
+
 	// Shortcut to dialog.
 	CAppDlg& oDlg = App.m_AppWnd.m_AppDlg;
 
@@ -522,7 +525,7 @@ void CAppCmds::OnLinkUnadvise()
 		App.m_AppWnd.ShowFlashIcon(true);
 
 		// Destroy all selected links...
-		for (int i = 0; i < vItems.Size(); ++i)
+		for (uint i = 0; i < vItems.size(); ++i)
 		{
 			CDDELink* pLink = oDlg.GetLink(vItems[i]);
 
@@ -531,8 +534,8 @@ void CAppCmds::OnLinkUnadvise()
 		}
 
 		// Remove all selected links...
-		for (int i = vItems.Size()-1; i >= 0; --i)
-			oDlg.RemoveLink(vItems[i]);
+		for (CIter oIter = vItems.rbegin(); oIter != vItems.rend(); ++oIter)
+			oDlg.RemoveLink(*oIter);
 
 		UpdateUI();
 		App.m_AppWnd.ShowFlashIcon(false);
