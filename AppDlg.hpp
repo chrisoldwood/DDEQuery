@@ -12,6 +12,9 @@
 #ifndef APPDLG_HPP
 #define APPDLG_HPP
 
+#include <Legacy/TMap.hpp>
+#include <Legacy/TMapIter.hpp>
+
 /******************************************************************************
 ** 
 ** This is the main application dialog.
