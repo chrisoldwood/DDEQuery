@@ -9,7 +9,6 @@
 */
 
 #include "AppHeaders.hpp"
-#include <atlconv.h>
 
 /******************************************************************************
 **
@@ -382,9 +381,7 @@ CString CDDEQueryApp::GetDisplayValue(const CBuffer& oValue, uint nFormat, bool 
 	// Unicode text?
 	else if (eType == CF_TYPE_UNICODE)
 	{
-		USES_CONVERSION;
-
-		strValue = W2A((const wchar_t*)oValue.Buffer());
+		strValue = W2A(static_cast<const wchar_t*>(oValue.Buffer()));
 	}
 	// Binary.
 	else
