@@ -31,7 +31,7 @@
 				SmallerTypeCheck="TRUE"
 				RuntimeLibrary="1"
 				BufferSecurityCheck="TRUE"
-				EnableFunctionLevelLinking="TRUE"
+				EnableFunctionLevelLinking="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
@@ -44,7 +44,7 @@
 				WarningLevel="4"
 				WarnAsError="TRUE"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -98,12 +98,12 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				InlineFunctionExpansion="1"
+				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../Lib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="TRUE"
+				EnableFunctionLevelLinking="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
@@ -115,6 +115,7 @@
 				WarningLevel="4"
 				WarnAsError="TRUE"
 				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -158,6 +159,18 @@
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{790BC113-52FB-4565-8968-79B8B011C520}"
+			Name="Core"/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{AED77F84-49CF-4B84-B319-2D07025ECA06}"
+			Name="Legacy"/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{FAB8D717-85EC-4896-B5DC-FDF0A0B67C92}"
+			Name="NCL"/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{9B0335B6-93BE-4604-8497-27431874D758}"
+			Name="Wcl"/>
 	</References>
 	<Files>
 		<Filter
@@ -183,9 +196,6 @@
 			</File>
 			<File
 				RelativePath="ConnectDlg.cpp">
-			</File>
-			<File
-				RelativePath="DDEQuery.rc">
 			</File>
 			<File
 				RelativePath="DDEQueryApp.cpp">
@@ -240,9 +250,6 @@
 				RelativePath=".\PrefsDlg.hpp">
 			</File>
 			<File
-				RelativePath="Resource.h">
-			</File>
-			<File
 				RelativePath=".\TextViewDlg.hpp">
 			</File>
 		</Filter>
@@ -256,7 +263,13 @@
 				RelativePath="App.rcv">
 			</File>
 			<File
+				RelativePath="DDEQuery.rc">
+			</File>
+			<File
 				RelativePath=".\ListIcons.bmp">
+			</File>
+			<File
+				RelativePath="Resource.h">
 			</File>
 			<File
 				RelativePath="Toolbar.bmp">
