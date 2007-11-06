@@ -12,6 +12,15 @@
 #ifndef TEXTVIEWDLG_HPP
 #define TEXTVIEWDLG_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/CommonUI.hpp>
+
+// Forward declarations.
+class CBuffer;
+
 /******************************************************************************
 ** 
 ** The view used to display the value as a text string.

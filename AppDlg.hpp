@@ -12,8 +12,19 @@
 #ifndef APPDLG_HPP
 #define APPDLG_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/MainDlg.hpp>
+#include <WCL/Buffer.hpp>
+#include <WCL/DateTime.hpp>
 #include <Legacy/TMap.hpp>
 #include <Legacy/TMapIter.hpp>
+#include <WCL/CommonUI.hpp>
+
+// Forward declarations.
+class CDDELink;
 
 /******************************************************************************
 ** 

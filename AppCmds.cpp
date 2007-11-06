@@ -8,11 +8,23 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
+#include "AppCmds.hpp"
+#include "DDEQueryApp.hpp"
 #include "ConnectDlg.hpp"
 #include "FullValueDlg.hpp"
 #include "PrefsDlg.hpp"
 #include "AboutDlg.hpp"
+#include <NCL/DDEClient.hpp>
+#include <NCL/DDECltConv.hpp>
+#include <NCL/DDEException.hpp>
+#include <NCL/DDEData.hpp>
+#include <NCL/DDELink.hpp>
+#include <WCL/StrTok.hpp>
+#include <WCL/BusyCursor.hpp>
+#include <WCL/AutoBool.hpp>
+#include <WCL/File.hpp>
+#include <WCL/FileException.hpp>
 
 /******************************************************************************
 **

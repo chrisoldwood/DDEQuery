@@ -8,13 +8,9 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
 #include "BinaryViewDlg.hpp"
-
-#ifdef _DEBUG
-// For memory leak detection.
-#define new DBGCRT_NEW
-#endif
+#include <WCL/Buffer.hpp>
 
 /******************************************************************************
 ** Method:		Default constructor.

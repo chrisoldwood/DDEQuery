@@ -8,14 +8,13 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
 #include "ConnectDlg.hpp"
+#include "DDEQueryApp.hpp"
 #include <limits.h>
-
-#ifdef _DEBUG
-// For memory leak detection.
-#define new DBGCRT_NEW
-#endif
+#include <NCL/DDEClient.hpp>
+#include <NCL/DDEException.hpp>
+#include <NCL/DDELink.hpp>
 
 /******************************************************************************
 ** Method:		Default constructor.

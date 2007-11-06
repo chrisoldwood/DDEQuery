@@ -12,8 +12,15 @@
 #ifndef FULLVALUEDLG_HPP
 #define FULLVALUEDLG_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/CommonUI.hpp>
 #include "TextViewDlg.hpp"
 #include "BinaryViewDlg.hpp"
+#include <WCL/Buffer.hpp>
+#include <WCL/TabWndHost.hpp>
 
 /******************************************************************************
 ** 

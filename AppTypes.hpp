@@ -12,6 +12,10 @@
 #ifndef APPTYPES_HPP
 #define APPTYPES_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
 /******************************************************************************
 **
 ** Clipboard format categories.

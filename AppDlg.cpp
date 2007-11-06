@@ -8,8 +8,13 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
+#include "AppDlg.hpp"
 #include "FullValueDlg.hpp"
+#include "DDEQueryApp.hpp"
+#include <WCL/Clipboard.hpp>
+#include <NCL/DDELink.hpp>
+#include <WCL/StrCvt.hpp>
 
 /******************************************************************************
 ** Method:		Default constructor.

@@ -12,6 +12,18 @@
 #ifndef APPWND_HPP
 #define APPWND_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/DlgFrame.hpp>
+#include "AppDlg.hpp"
+#include <WCL/FrameMenu.hpp>
+#include <WCL/StatusBar.hpp>
+#include <WCL/StatusBarIcon.hpp>
+#include <WCL/Accel.hpp>
+#include <WCL/TransparentBmp.hpp>
+
 /******************************************************************************
 **
 ** This is the the applications main window.

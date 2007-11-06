@@ -8,7 +8,15 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
+#include "DDEQueryApp.hpp"
+#include <NCL/DDEClient.hpp>
+#include <NCL/DDEException.hpp>
+#include <NCL/DDELink.hpp>
+#include <NCL/DDECltConv.hpp>
+#include <NCL/DDEData.hpp>
+#include <WCL/Clipboard.hpp>
+#include <Core/AnsiWide.hpp>
 
 /******************************************************************************
 **

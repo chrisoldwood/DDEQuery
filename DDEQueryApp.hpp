@@ -12,6 +12,21 @@
 #ifndef DDEQUERYAPP_HPP
 #define DDEQUERYAPP_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/App.hpp>
+#include <NCL/DefDDEClientListener.hpp>
+#include "AppWnd.hpp"
+#include "AppCmds.hpp"
+#include <WCL/IniFile.hpp>
+#include <WCL/MRUList.hpp>
+#include "AppTypes.hpp"
+
+// Forward declarations.
+class CDDEClient;
+
 /******************************************************************************
 ** 
 ** The application class.
