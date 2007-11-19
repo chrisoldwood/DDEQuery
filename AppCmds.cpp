@@ -56,30 +56,30 @@ CAppCmds::CAppCmds()
 	// Define the command table.
 	DEFINE_CMD_TABLE
 		// Server menu.
-		CMD_ENTRY(ID_SERVER_CONNECT,		OnServerConnect,		OnUIServerConnect,		-1)
-		CMD_ENTRY(ID_SERVER_DISCONNECT,		OnServerDisconnect,		OnUIServerDisconnect,	-1)
+		CMD_ENTRY(ID_SERVER_CONNECT,		&CAppCmds::OnServerConnect,		&CAppCmds::OnUIServerConnect,		-1)
+		CMD_ENTRY(ID_SERVER_DISCONNECT,		&CAppCmds::OnServerDisconnect,	&CAppCmds::OnUIServerDisconnect,	-1)
 		CMD_RANGE(ID_SERVER_MRU_1,
-				  ID_SERVER_MRU_5,			OnServerMRU,			NULL,					-1) 
-		CMD_ENTRY(ID_SERVER_EXIT,			OnServerExit,			NULL,					-1)
+				  ID_SERVER_MRU_5,			&CAppCmds::OnServerMRU,			NULL,								-1) 
+		CMD_ENTRY(ID_SERVER_EXIT,			&CAppCmds::OnServerExit,		NULL,								-1)
 		// Command menu.
-		CMD_ENTRY(ID_COMMAND_REQUEST,		OnCommandRequest,		OnUICommandRequest,		-1)
-		CMD_ENTRY(ID_COMMAND_POKE,			OnCommandPoke,			OnUICommandPoke,		-1)
-		CMD_ENTRY(ID_COMMAND_EXECUTE,		OnCommandExecute,		OnUICommandExecute,		-1)
+		CMD_ENTRY(ID_COMMAND_REQUEST,		&CAppCmds::OnCommandRequest,	&CAppCmds::OnUICommandRequest,		-1)
+		CMD_ENTRY(ID_COMMAND_POKE,			&CAppCmds::OnCommandPoke,		&CAppCmds::OnUICommandPoke,			-1)
+		CMD_ENTRY(ID_COMMAND_EXECUTE,		&CAppCmds::OnCommandExecute,	&CAppCmds::OnUICommandExecute,		-1)
 		// Link menu.
-		CMD_ENTRY(ID_LINK_ADVISE,			OnLinkAdvise,			OnUILinkAdvise,			-1)
-		CMD_ENTRY(ID_LINK_UNADVISE,			OnLinkUnadvise,			OnUILinkUnadvise,		-1)
-		CMD_ENTRY(ID_LINK_UNADVISE_ALL,		OnLinkUnadviseAll,		OnUILinkUnadviseAll,	-1)
-		CMD_ENTRY(ID_LINK_REQ_VALUES,		OnLinkReqValues,		OnUILinkReqValues,		-1)
-		CMD_ENTRY(ID_LINK_COPY_CLIPBOARD,	OnLinkCopyClipboard,	OnUILinkCopyClipboard,	-1)
-		CMD_ENTRY(ID_LINK_COPY_ITEM,		OnLinkCopyItem,			OnUILinkCopyItem,		-1)
-		CMD_ENTRY(ID_LINK_PASTE_ITEM,		OnLinkPasteItem,		OnUILinkPasteItem,		-1)
-		CMD_ENTRY(ID_LINK_OPEN_FILE,		OnLinkOpenFile,			OnUILinkOpenFile,		-1)
-		CMD_ENTRY(ID_LINK_SAVE_FILE,		OnLinkSaveFile,			OnUILinkSaveFile,		-1)
-		CMD_ENTRY(ID_LINK_SHOW_VALUE,		OnLinkShowValue,		OnUILinkShowValue,		-1)
+		CMD_ENTRY(ID_LINK_ADVISE,			&CAppCmds::OnLinkAdvise,		&CAppCmds::OnUILinkAdvise,			-1)
+		CMD_ENTRY(ID_LINK_UNADVISE,			&CAppCmds::OnLinkUnadvise,		&CAppCmds::OnUILinkUnadvise,		-1)
+		CMD_ENTRY(ID_LINK_UNADVISE_ALL,		&CAppCmds::OnLinkUnadviseAll,	&CAppCmds::OnUILinkUnadviseAll,		-1)
+		CMD_ENTRY(ID_LINK_REQ_VALUES,		&CAppCmds::OnLinkReqValues,		&CAppCmds::OnUILinkReqValues,		-1)
+		CMD_ENTRY(ID_LINK_COPY_CLIPBOARD,	&CAppCmds::OnLinkCopyClipboard,	&CAppCmds::OnUILinkCopyClipboard,	-1)
+		CMD_ENTRY(ID_LINK_COPY_ITEM,		&CAppCmds::OnLinkCopyItem,		&CAppCmds::OnUILinkCopyItem,		-1)
+		CMD_ENTRY(ID_LINK_PASTE_ITEM,		&CAppCmds::OnLinkPasteItem,		&CAppCmds::OnUILinkPasteItem,		-1)
+		CMD_ENTRY(ID_LINK_OPEN_FILE,		&CAppCmds::OnLinkOpenFile,		&CAppCmds::OnUILinkOpenFile,		-1)
+		CMD_ENTRY(ID_LINK_SAVE_FILE,		&CAppCmds::OnLinkSaveFile,		&CAppCmds::OnUILinkSaveFile,		-1)
+		CMD_ENTRY(ID_LINK_SHOW_VALUE,		&CAppCmds::OnLinkShowValue,		&CAppCmds::OnUILinkShowValue,		-1)
 		// Options menu.
-		CMD_ENTRY(ID_OPTIONS_PREFS,			OnOptionsPrefs,			NULL,					-1)
+		CMD_ENTRY(ID_OPTIONS_PREFS,			&CAppCmds::OnOptionsPrefs,		NULL,								-1)
 		// Help menu.
-		CMD_ENTRY(ID_HELP_ABOUT,			OnHelpAbout,			NULL,					10)
+		CMD_ENTRY(ID_HELP_ABOUT,			&CAppCmds::OnHelpAbout,			NULL,								10)
 	END_CMD_TABLE
 }
 

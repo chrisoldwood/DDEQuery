@@ -54,13 +54,13 @@ CAppDlg::CAppDlg()
 	END_GRAVITY_TABLE
 
 	DEFINE_CTRLMSG_TABLE
-		NFY_CTRLMSG(IDC_LINKS,      LVN_ITEMCHANGED, OnLinksSelchange)
-		NFY_CTRLMSG(IDC_LINKS,      LVN_COLUMNCLICK, OnLinksClickColumn)
-		NFY_CTRLMSG(IDC_LINKS,      NM_RCLICK,       OnLinksRightClick)
-		NFY_CTRLMSG(IDC_LINKS,      NM_DBLCLK,       OnLinksDoubleClick)
-		CMD_CTRLMSG(IDC_ITEM,       EN_CHANGE,       OnItemChanged)
-		CMD_CTRLMSG(IDC_VALUE,      EN_CHANGE,       OnValueChanged)
-		CMD_CTRLMSG(IDC_FULL_VALUE, BN_CLICKED,      OnFullValue)
+		NFY_CTRLMSG(IDC_LINKS,      LVN_ITEMCHANGED, &CAppDlg::OnLinksSelchange)
+		NFY_CTRLMSG(IDC_LINKS,      LVN_COLUMNCLICK, &CAppDlg::OnLinksClickColumn)
+		NFY_CTRLMSG(IDC_LINKS,      NM_RCLICK,       &CAppDlg::OnLinksRightClick)
+		NFY_CTRLMSG(IDC_LINKS,      NM_DBLCLK,       &CAppDlg::OnLinksDoubleClick)
+		CMD_CTRLMSG(IDC_ITEM,       EN_CHANGE,       &CAppDlg::OnItemChanged)
+		CMD_CTRLMSG(IDC_VALUE,      EN_CHANGE,       &CAppDlg::OnValueChanged)
+		CMD_CTRLMSG(IDC_FULL_VALUE, BN_CLICKED,      &CAppDlg::OnFullValue)
 	END_CTRLMSG_TABLE
 }
 
