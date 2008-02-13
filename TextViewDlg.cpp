@@ -97,7 +97,7 @@ void CTextViewDlg::OnCtlColour(uint nCtlClrMsg, HDC hDC, HWND hCtlWnd)
 		// Set colour in HDC and return brush.
 		::SetBkColor(hDC, ::GetSysColor(COLOR_WINDOW));
 
-		MsgHandled((BOOL)oBgBrush.Handle());
+		MsgHandled(reinterpret_cast<BOOL>(oBgBrush.Handle()));
 		MsgResult (0);
 		return;
 	}
