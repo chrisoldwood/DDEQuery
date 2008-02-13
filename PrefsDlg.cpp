@@ -74,14 +74,14 @@ bool CPrefsDlg::OnOk()
 	// Validate controls.
 	if (m_ebDDETimeOut.TextLength() == 0)
 	{
-		AlertMsg("Please provide the 'DDE Timeout Time'");
+		AlertMsg(TXT("Please provide the 'DDE Timeout Time'"));
 		m_ebDDETimeOut.Focus();
 		return false;
 	}
 
 	if (m_ebFlashTime.TextLength() == 0)
 	{
-		AlertMsg("Please provide the 'Advise Indication Time'");
+		AlertMsg(TXT("Please provide the 'Advise Indication Time'"));
 		m_ebFlashTime.Focus();
 		return false;
 	}

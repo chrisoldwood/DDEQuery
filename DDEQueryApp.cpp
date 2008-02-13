@@ -36,14 +36,14 @@ CDDEQueryApp App;
 */
 
 #ifdef _DEBUG
-const char* CDDEQueryApp::VERSION      = "v1.5 [Debug]";
+const tchar* CDDEQueryApp::VERSION = TXT("v1.5 [Debug]");
 #else
-const char* CDDEQueryApp::VERSION      = "v1.5";
+const tchar* CDDEQueryApp::VERSION = TXT("v1.5");
 #endif
-const char* CDDEQueryApp::INI_FILE_VER_10 = "1.0";
-const char* CDDEQueryApp::INI_FILE_VER_15 = "1.5";
-const uint  CDDEQueryApp::DEF_FLASH_TIME  = 1000;
-const DWORD CDDEQueryApp::DEF_DDE_TIMEOUT = 30000;
+const tchar* CDDEQueryApp::INI_FILE_VER_10 = TXT("1.0");
+const tchar* CDDEQueryApp::INI_FILE_VER_15 = TXT("1.5");
+const uint   CDDEQueryApp::DEF_FLASH_TIME  = 1000;
+const DWORD  CDDEQueryApp::DEF_DDE_TIMEOUT = 30000;
 
 /******************************************************************************
 ** Method:		Constructor
@@ -102,7 +102,7 @@ CDDEQueryApp::~CDDEQueryApp()
 bool CDDEQueryApp::OnOpen()
 {
 	// Set the app title.
-	m_strTitle = "DDE Query";
+	m_strTitle = TXT("DDE Query");
 
 	// Load settings.
 	LoadConfig();
@@ -115,7 +115,7 @@ bool CDDEQueryApp::OnOpen()
 	}
 	catch (CException& e)
 	{
-		FatalMsg(e.ErrorText());
+		FatalMsg(TXT("%s"), e.ErrorText());
 		return false;
 	}
 
@@ -181,35 +181,35 @@ bool CDDEQueryApp::OnClose()
 void CDDEQueryApp::LoadConfig()
 {
 	// Read the file version.
-	CString strVer = m_oIniFile.ReadString("Version", "Version", INI_FILE_VER_15);
+	CString strVer = m_oIniFile.ReadString(TXT("Version"), TXT("Version"), INI_FILE_VER_15);
 
 	// Fix-up old .ini file settings.
 	if (strVer == INI_FILE_VER_10)
 	{
 		// Read the window pos and size.
-		m_rcLastPos.left   = m_oIniFile.ReadInt("UI", "Left",   0);
-		m_rcLastPos.top    = m_oIniFile.ReadInt("UI", "Top",    0);
-		m_rcLastPos.right  = m_oIniFile.ReadInt("UI", "Right",  0);
-		m_rcLastPos.bottom = m_oIniFile.ReadInt("UI", "Bottom", 0);
+		m_rcLastPos.left   = m_oIniFile.ReadInt(TXT("UI"), TXT("Left"),   0);
+		m_rcLastPos.top    = m_oIniFile.ReadInt(TXT("UI"), TXT("Top"),    0);
+		m_rcLastPos.right  = m_oIniFile.ReadInt(TXT("UI"), TXT("Right"),  0);
+		m_rcLastPos.bottom = m_oIniFile.ReadInt(TXT("UI"), TXT("Bottom"), 0);
 	}
 
 	// Read the MRU settings.
-	m_strLastService = m_oIniFile.ReadString("Main", "LastService", m_strLastService);
-	m_strLastTopic   = m_oIniFile.ReadString("Main", "LastTopic",   m_strLastTopic  );
-	m_strLastFolder  = m_oIniFile.ReadString("Main", "LastFolder",  m_strLastFolder );
+	m_strLastService = m_oIniFile.ReadString(TXT("Main"), TXT("LastService"), m_strLastService);
+	m_strLastTopic   = m_oIniFile.ReadString(TXT("Main"), TXT("LastTopic"),   m_strLastTopic  );
+	m_strLastFolder  = m_oIniFile.ReadString(TXT("Main"), TXT("LastFolder"),  m_strLastFolder );
 
 	// Read the window last positions.
-	m_rcLastPos      = m_oIniFile.ReadRect("UI", "MainWindow", m_rcLastPos);
-	m_rcFullValueDlg = m_oIniFile.ReadRect("UI", "FullValue",  m_rcFullValueDlg);
+	m_rcLastPos      = m_oIniFile.ReadRect(TXT("UI"), TXT("MainWindow"), m_rcLastPos);
+	m_rcFullValueDlg = m_oIniFile.ReadRect(TXT("UI"), TXT("FullValue"),  m_rcFullValueDlg);
 
 	// Load DDE settings.
-	m_dwDDETimeOut = m_oIniFile.ReadUInt("DDE", "TimeOut", m_dwDDETimeOut);
+	m_dwDDETimeOut = m_oIniFile.ReadUInt(TXT("DDE"), TXT("TimeOut"), m_dwDDETimeOut);
 
 	// Load MRU conversation list.
 	m_oMRUList.Load(m_oIniFile);
 
 	// Load advise settings.
-	m_nFlashTime = m_oIniFile.ReadInt("UI", "FlashTime", m_nFlashTime);
+	m_nFlashTime = m_oIniFile.ReadInt(TXT("UI"), TXT("FlashTime"), m_nFlashTime);
 }
 
 /******************************************************************************
@@ -227,34 +227,34 @@ void CDDEQueryApp::LoadConfig()
 void CDDEQueryApp::SaveConfig()
 {
 	// Delete old settings, if old format file.
-	if (m_oIniFile.ReadString("Version", "Version", INI_FILE_VER_15) == INI_FILE_VER_10)
+	if (m_oIniFile.ReadString(TXT("Version"), TXT("Version"), INI_FILE_VER_15) == INI_FILE_VER_10)
 	{
-		m_oIniFile.DeleteEntry("UI", "Left");
-		m_oIniFile.DeleteEntry("UI", "Top");
-		m_oIniFile.DeleteEntry("UI", "Right");
-		m_oIniFile.DeleteEntry("UI", "Bottom");
+		m_oIniFile.DeleteEntry(TXT("UI"), TXT("Left"));
+		m_oIniFile.DeleteEntry(TXT("UI"), TXT("Top"));
+		m_oIniFile.DeleteEntry(TXT("UI"), TXT("Right"));
+		m_oIniFile.DeleteEntry(TXT("UI"), TXT("Bottom"));
 	}
 
 	// Write the file version.
-	m_oIniFile.WriteString("Version", "Version", INI_FILE_VER_15);
+	m_oIniFile.WriteString(TXT("Version"), TXT("Version"), INI_FILE_VER_15);
 
 	// Write the MRU settings.
-	m_oIniFile.WriteString("Main", "LastService", m_strLastService);
-	m_oIniFile.WriteString("Main", "LastTopic",   m_strLastTopic  );
-	m_oIniFile.WriteString("Main", "LastFolder",  m_strLastFolder );
+	m_oIniFile.WriteString(TXT("Main"), TXT("LastService"), m_strLastService);
+	m_oIniFile.WriteString(TXT("Main"), TXT("LastTopic"),   m_strLastTopic  );
+	m_oIniFile.WriteString(TXT("Main"), TXT("LastFolder"),  m_strLastFolder );
 
 	// Write the window pos and size.
-	m_oIniFile.WriteRect("UI", "MainWindow", m_rcLastPos);
-	m_oIniFile.WriteRect("UI", "FullValue",  m_rcFullValueDlg);
+	m_oIniFile.WriteRect(TXT("UI"), TXT("MainWindow"), m_rcLastPos);
+	m_oIniFile.WriteRect(TXT("UI"), TXT("FullValue"),  m_rcFullValueDlg);
 
 	// Save DDE settings.
-	m_oIniFile.WriteUInt("DDE", "TimeOut", m_dwDDETimeOut);
+	m_oIniFile.WriteUInt(TXT("DDE"), TXT("TimeOut"), m_dwDDETimeOut);
 
 	// Save MRU conversation list.
 	m_oMRUList.Save(m_oIniFile);
 
 	// Save advise settings.
-	m_oIniFile.WriteInt("UI", "FlashTime", m_nFlashTime);
+	m_oIniFile.WriteInt(TXT("UI"), TXT("FlashTime"), m_nFlashTime);
 }
 
 /******************************************************************************
@@ -280,7 +280,7 @@ void CDDEQueryApp::OnDisconnect(CDDECltConv* /*pConv*/)
 		m_pDDEClient->DestroyConversation(m_pDDEConv);
 
 	// Notify user.
-	AlertMsg("Lost connection to DDE server.");
+	AlertMsg(TXT("Lost connection to DDE server."));
 }
 
 /******************************************************************************
@@ -373,7 +373,7 @@ FmtType CDDEQueryApp::GetFormatType(uint nFormat)
 
 CString CDDEQueryApp::GetDisplayValue(const CBuffer& oValue, uint nFormat, bool bSimple)
 {
-	CString strValue = "";
+	CString strValue;
 
 	// Empty value?
 	if (oValue.Size() == 0)
@@ -384,12 +384,12 @@ CString CDDEQueryApp::GetDisplayValue(const CBuffer& oValue, uint nFormat, bool 
 	// Simple ANSI text?
 	if (eType == CF_TYPE_ANSI)
 	{
-		strValue = oValue.ToString();
+		strValue = A2T(static_cast<const char*>(oValue.Buffer()));
 	}
 	// Unicode text?
 	else if (eType == CF_TYPE_UNICODE)
 	{
-		strValue = W2A(static_cast<const wchar_t*>(oValue.Buffer()));
+		strValue = W2T(static_cast<const wchar_t*>(oValue.Buffer()));
 	}
 	// Binary.
 	else
@@ -397,15 +397,15 @@ CString CDDEQueryApp::GetDisplayValue(const CBuffer& oValue, uint nFormat, bool 
 		// Single-line display?
 		if (bSimple)
 		{
-			strValue.Format("(%u bytes)", oValue.Size());
+			strValue.Format(TXT("(%u bytes)"), oValue.Size());
 		}
 		// Multi-line display.
 		else
 		{
-			char* pszValue = (char*) alloca(oValue.Size()+1);
+			char* pszValue = static_cast<char*>(alloca(oValue.Size()+1));
 
 			// Copy value to temporary buffer.
-			memcpy(pszValue, static_cast<const char*>(oValue.Buffer()), oValue.Size());
+			memcpy(pszValue, oValue.Buffer(), oValue.Size());
 
 			// Convert non-printable chars.
 			for (uint i = 0; i < oValue.Size(); ++i)
@@ -424,7 +424,7 @@ CString CDDEQueryApp::GetDisplayValue(const CBuffer& oValue, uint nFormat, bool 
 			// Terminate string.
 			pszValue[oValue.Size()] = '\0';
 
-			strValue = pszValue;
+			strValue = A2T(pszValue);
 		}
 	}
 

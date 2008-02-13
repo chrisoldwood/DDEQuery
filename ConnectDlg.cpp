@@ -64,18 +64,18 @@ void CConnectDlg::OnInitDialog()
 		// Populate servers combo.
 		App.m_pDDEClient->QueryServers(astrServers);
 	
-		for (int i = 0; i < astrServers.Size(); ++i)
+		for (size_t i = 0; i < astrServers.Size(); ++i)
 			m_cbService.Add(astrServers[i]);
 
 		// Select 1st by default.
 		if (m_cbService.Count() > 0)
-			m_cbService.CurSel(0);
+			m_cbService.CurSel(0U);
 	}
 	catch (CDDEException& /*e*/)
 	{ }
 
 	// Select previous service name.
-	if (m_strService != "")
+	if (m_strService != TXT(""))
 	{
 		int nDefault = m_cbService.FindExact(m_strService);
 
@@ -89,7 +89,7 @@ void CConnectDlg::OnInitDialog()
 	OnSelectServer();
 
 	// Select previous topic name.
-	if (m_strTopic != "")
+	if (m_strTopic != TXT(""))
 	{
 		int nDefault = m_cbTopic.FindExact(m_strTopic);
 
@@ -120,7 +120,7 @@ bool CConnectDlg::OnOk()
 	// Validate service name.
 	if (m_cbService.TextLength() == 0)
 	{
-		AlertMsg("Please enter a DDE service name.");
+		AlertMsg(TXT("Please enter a DDE service name."));
 		m_cbService.Focus();
 		return false;
 	}
@@ -128,7 +128,7 @@ bool CConnectDlg::OnOk()
 	// Validate topic name.
 	if (m_cbTopic.TextLength() == 0)
 	{
-		AlertMsg("Please enter a topic name.");
+		AlertMsg(TXT("Please enter a topic name."));
 		m_cbTopic.Focus();
 		return false;
 	}
@@ -170,12 +170,12 @@ void CConnectDlg::OnSelectServer()
 		// Populate topics combo.
 		App.m_pDDEClient->QueryServerTopics(strServer, astrTopics);
 	
-		for (int i = 0; i < astrTopics.Size(); ++i)
+		for (size_t i = 0; i < astrTopics.Size(); ++i)
 			m_cbTopic.Add(astrTopics[i]);
 
 		// Select 1st by default.
 		if (m_cbTopic.Count() > 0)
-			m_cbTopic.CurSel(0);
+			m_cbTopic.CurSel(0U);
 	}
 	catch (CDDEException& /*e*/)
 	{ }

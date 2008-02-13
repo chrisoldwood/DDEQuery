@@ -25,6 +25,7 @@
 #include <WCL/AutoBool.hpp>
 #include <WCL/File.hpp>
 #include <WCL/FileException.hpp>
+#include <Core/AnsiWide.hpp>
 
 /******************************************************************************
 **
@@ -33,11 +34,11 @@
 *******************************************************************************
 */
 
-static char szTXTExts[] = {	"Text Files (*.txt)\0*.txt\0"
-							"All Files (*.*)\0*.*\0"
-							"\0\0"							};
+static tchar szTXTExts[] = {	TXT("Text Files (*.txt)\0*.txt\0")
+								TXT("All Files (*.*)\0*.*\0")
+								TXT("\0\0")							};
 
-static char szTXTDefExt[] = { "txt" };
+static tchar szTXTDefExt[] = { TXT("txt") };
 
 /******************************************************************************
 ** Method:		Constructor.
@@ -141,7 +142,7 @@ void CAppCmds::OnServerDisconnect()
 	// Inside DDE call?
 	if ((App.m_pDDEConv != NULL) && (App.m_bInDDECall))
 	{
-		App.m_AppWnd.AlertMsg("You cannot close the connection while a request is in progress.");
+		App.m_AppWnd.AlertMsg(TXT("You cannot close the connection while a request is in progress."));
 		return;
 	}
 
@@ -197,9 +198,9 @@ void CAppCmds::OnServerMRU(int nCmdID)
 	CString strConv = App.m_oMRUList[nCmdID - ID_SERVER_MRU_1];
 
 	// Split "Service|Topic" into separate strings.
-	if (CStrTok::Split(strConv, "|", astrFields) != 2)
+	if (CStrTok::Split(strConv, TXT("|"), astrFields) != 2)
 	{
-		App.AlertMsg("Invalid MRU entry: %s", strConv);
+		App.AlertMsg(TXT("Invalid MRU entry: %s"), strConv);
 		return;
 	}
 
@@ -266,14 +267,14 @@ void CAppCmds::OnServerConnect(const CString& strService, const CString& strTopi
 		App.m_AppWnd.m_AppDlg.Focus();
 
 		// Update the MRU list.
-		App.m_oMRUList.Add(strService + "|" + strTopic);
+		App.m_oMRUList.Add(strService + TXT("|") + strTopic);
 		App.m_oMRUList.UpdateMenu(*App.m_AppWnd.Menu(), ID_SERVER_MRU_1);
 	}
 	catch (CDDEException& e)
 	{
 		OnServerDisconnect();
 
-		App.AlertMsg(e.ErrorText());
+		App.AlertMsg(TXT("%s"), e.ErrorText());
 	}
 
 	UpdateUI();
@@ -302,9 +303,9 @@ void CAppCmds::OnCommandRequest()
 	uint    nFormat   = App.m_AppWnd.m_AppDlg.GetSelFormat();
 
 	// Item provided?
-	if (strItem == "")
+	if (strItem == TXT(""))
 	{
-		App.AlertMsg("Please provide the item name.");
+		App.AlertMsg(TXT("Please provide the item name."));
 		App.m_AppWnd.m_AppDlg.SetItemFocus();
 		return;
 	}
@@ -312,7 +313,7 @@ void CAppCmds::OnCommandRequest()
 	// Invalid format?
 	if (nFormat == NULL)
 	{
-		App.AlertMsg("Invalid clipboard format.");
+		App.AlertMsg(TXT("Invalid clipboard format."));
 		App.m_AppWnd.m_AppDlg.SetFormatFocus();
 		return;
 	}
@@ -336,7 +337,7 @@ void CAppCmds::OnCommandRequest()
 		if (!App.m_pDDEConv->IsConnected())
 			DoServerDisconnect();
 
-		App.AlertMsg(e.ErrorText());
+		App.AlertMsg(TXT("%s"), e.ErrorText());
 	}
 
 	App.m_AppWnd.ShowFlashIcon(false);
@@ -363,9 +364,9 @@ void CAppCmds::OnCommandPoke()
 	CString strValue = App.m_AppWnd.m_AppDlg.GetItemValue();
 
 	// Item provided?
-	if (strItem == "")
+	if (strItem == TXT(""))
 	{
-		App.AlertMsg("Please provide the item name.");
+		App.AlertMsg(TXT("Please provide the item name."));
 		App.m_AppWnd.m_AppDlg.SetItemFocus();
 		return;
 	}
@@ -378,7 +379,7 @@ void CAppCmds::OnCommandPoke()
 		App.m_AppWnd.ShowFlashIcon(true);
 
 		// Poke the value.
-		App.m_pDDEConv->Poke(strItem, strValue);
+		App.m_pDDEConv->PokeString(strItem, strValue, CF_TEXT);
 	}
 	catch (CDDEException& e)
 	{
@@ -386,7 +387,7 @@ void CAppCmds::OnCommandPoke()
 		if (!App.m_pDDEConv->IsConnected())
 			DoServerDisconnect();
 
-		App.AlertMsg(e.ErrorText());
+		App.AlertMsg(TXT("%s"), e.ErrorText());
 	}
 
 	App.m_AppWnd.ShowFlashIcon(false);
@@ -412,9 +413,9 @@ void CAppCmds::OnCommandExecute()
 	CString strCmd = App.m_AppWnd.m_AppDlg.GetItemName();
 
 	// Command provided?
-	if (strCmd == "")
+	if (strCmd == TXT(""))
 	{
-		App.AlertMsg("Please provide the command.");
+		App.AlertMsg(TXT("Please provide the command."));
 		App.m_AppWnd.m_AppDlg.SetItemFocus();
 		return;
 	}
@@ -435,7 +436,7 @@ void CAppCmds::OnCommandExecute()
 		if (!App.m_pDDEConv->IsConnected())
 			DoServerDisconnect();
 
-		App.AlertMsg(e.ErrorText());
+		App.AlertMsg(TXT("%s"), e.ErrorText());
 	}
 
 	App.m_AppWnd.ShowFlashIcon(false);
@@ -462,9 +463,9 @@ void CAppCmds::OnLinkAdvise()
 	uint    nFormat = App.m_AppWnd.m_AppDlg.GetSelFormat();
 
 	// Item provided?
-	if (strItem == "")
+	if (strItem == TXT(""))
 	{
-		App.AlertMsg("Please provide the item name.");
+		App.AlertMsg(TXT("Please provide the item name."));
 		App.m_AppWnd.m_AppDlg.SetItemFocus();
 		return;
 	}
@@ -472,7 +473,7 @@ void CAppCmds::OnLinkAdvise()
 	// Invalid format?
 	if (nFormat == NULL)
 	{
-		App.AlertMsg("Invalid clipboard format.");
+		App.AlertMsg(TXT("Invalid clipboard format."));
 		App.m_AppWnd.m_AppDlg.SetFormatFocus();
 		return;
 	}
@@ -496,7 +497,7 @@ void CAppCmds::OnLinkAdvise()
 		if (!App.m_pDDEConv->IsConnected())
 			DoServerDisconnect();
 
-		App.AlertMsg(e.ErrorText());
+		App.AlertMsg(TXT("%s"), e.ErrorText());
 	}
 
 	UpdateUI();
@@ -521,12 +522,12 @@ void CAppCmds::OnLinkUnadvise()
 	ASSERT(App.m_AppWnd.m_AppDlg.IsLinkSelected());
 
 	//Template shorthands.
-	typedef CListView::CUIntArray::reverse_iterator CIter;
+	typedef CListView::Items::reverse_iterator CIter;
 
 	// Shortcut to dialog.
 	CAppDlg& oDlg = App.m_AppWnd.m_AppDlg;
 
-	CListView::CUIntArray vItems;
+	CListView::Items vItems;
 
 	// Get selected items.
 	if (oDlg.GetAllSelLinks(vItems) > 0)
@@ -609,7 +610,7 @@ void CAppCmds::OnLinkReqValues()
 	App.m_AppWnd.ShowFlashIcon(true);
 
 	// For all links...
-	for (int i = 0; i < vLinks.Size(); ++i) 
+	for (size_t i = 0; i < vLinks.Size(); ++i) 
 	{
 		CDDELink* pLink = vLinks[i];
 
@@ -750,10 +751,10 @@ void CAppCmds::OnLinkOpenFile()
 		// For all lines...
 		while (!oFile.IsEOF())
 		{
-			CString strLine = oFile.ReadLine();
+			CString strLine = oFile.ReadLine(ANSI_TEXT);
 
 			// Ignore empty lines and comments.
-			if ((strLine == "") || (strLine[0] == '#') || (strLine[0] == ';'))
+			if ((strLine == TXT("")) || (strLine[0U] == TXT('#')) || (strLine[0U] == TXT(';')))
 				continue;
 
 			astrLinks.Add(strLine);
@@ -768,7 +769,7 @@ void CAppCmds::OnLinkOpenFile()
 	catch(CFileException& e)
 	{
 		// Notify user.
-		App.AlertMsg(e.ErrorText());
+		App.AlertMsg(TXT("%s"), e.ErrorText());
 		return;
 	}
 
@@ -778,7 +779,7 @@ void CAppCmds::OnLinkOpenFile()
 	App.m_AppWnd.ShowFlashIcon(true);
 
 	// Create links...
-	for (int i = 0; i < astrLinks.Size(); ++i)
+	for (size_t i = 0; i < astrLinks.Size(); ++i)
 	{
 		try
 		{
@@ -807,7 +808,7 @@ void CAppCmds::OnLinkOpenFile()
 
 	// Report any errors.
 	if (nErrors > 0)
-		App.AlertMsg("Failed to create %d links.", nErrors);
+		App.AlertMsg(TXT("Failed to create %d links."), nErrors);
 
 	UpdateUI();
 }
@@ -842,11 +843,11 @@ void CAppCmds::OnLinkSaveFile()
 		oFile.Create(strPath);
 
 		// Write header.
-		oFile.WriteLine(CString::Fmt("# %s|%s", App.m_pDDEConv->Service(), App.m_pDDEConv->Topic()));
+		oFile.WriteLine(CString::Fmt(TXT("# %s|%s"), App.m_pDDEConv->Service(), App.m_pDDEConv->Topic()), ANSI_TEXT);
 
 		// For all links...
-		for (int i = 0; i < App.m_pDDEConv->NumLinks(); ++i)
-			oFile.WriteLine(App.m_pDDEConv->GetLink(i)->Item());
+		for (size_t i = 0; i < App.m_pDDEConv->NumLinks(); ++i)
+			oFile.WriteLine(App.m_pDDEConv->GetLink(i)->Item(), ANSI_TEXT);
 
 		// Close.
 		oFile.Close();
@@ -857,7 +858,7 @@ void CAppCmds::OnLinkSaveFile()
 	catch(CFileException& e)
 	{
 		// Notify user.
-		App.AlertMsg(e.ErrorText());
+		App.AlertMsg(TXT("%s"), e.ErrorText());
 		return;
 	}
 }

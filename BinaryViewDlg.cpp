@@ -92,7 +92,7 @@ void CBinaryViewDlg::DisplayValue()
 		CString strOffset, strBytes, strASCII;
 
 		// Format the buffer offset.
-		strOffset = CString::Fmt("%08X ", r*BYTES_PER_ROW);
+		strOffset = CString::Fmt(TXT("%08X "), r*BYTES_PER_ROW);
 
 		// Create the row of byte and ASCII values...
 		for (uint c = 0, i = r; c < BYTES_PER_ROW; ++c, ++i)
@@ -100,17 +100,17 @@ void CBinaryViewDlg::DisplayValue()
 			if (i < nSize)
 			{
 				// Format the byte as a hex number and as printable ASCII.
-				strBytes += CString::Fmt("%02X ", pBuffer[i]);
+				strBytes += CString::Fmt(TXT("%02X "), pBuffer[i]);
 				strASCII += isprint(pBuffer[i]) ? pBuffer[i] : '.';
 			}
 			else
 			{
 				// Pad the row with spaces.
-				strBytes += "   ";
-				strASCII += " ";
+				strBytes += TXT("   ");
+				strASCII += TXT(" ");
 			}
 		}
 
-		m_lbValue.Add(strOffset + "  " + strBytes + "  " + strASCII);
+		m_lbValue.Add(strOffset + TXT("  ") + strBytes + TXT("  ") + strASCII);
 	}
 }

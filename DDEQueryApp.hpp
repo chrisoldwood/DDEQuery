@@ -73,7 +73,7 @@ public:
 	//
 	// Constants.
 	//
-	static const char* VERSION;
+	static const tchar* VERSION;
 
 protected:
 	//
@@ -91,8 +91,8 @@ protected:
 	//
 	// Constants.
 	//
-	static const char* INI_FILE_VER_10;
-	static const char* INI_FILE_VER_15;
+	static const tchar* INI_FILE_VER_10;
+	static const tchar* INI_FILE_VER_15;
 	static const uint  DEF_FLASH_TIME;
 	static const DWORD DEF_DDE_TIMEOUT;
 

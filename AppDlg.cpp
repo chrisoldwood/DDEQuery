@@ -93,10 +93,10 @@ void CAppDlg::OnInitDialog()
 	m_lvLinks.ImageList(LVSIL_SMALL, IDB_LISTICONS, 16, RGB(255, 0, 255));
 
 	// Create links lisview columns.
-	m_lvLinks.InsertColumn(ITEM_NAME,    "Item",      150, LVCFMT_LEFT);
-	m_lvLinks.InsertColumn(LAST_VALUE,   "Value",     200, LVCFMT_LEFT);
-	m_lvLinks.InsertColumn(ADVISE_TIME,  "Updated",   150, LVCFMT_LEFT);
-	m_lvLinks.InsertColumn(ADVISE_COUNT, "# Advises", 100, LVCFMT_RIGHT);
+	m_lvLinks.InsertColumn(ITEM_NAME,    TXT("Item"),      150, LVCFMT_LEFT);
+	m_lvLinks.InsertColumn(LAST_VALUE,   TXT("Value"),     200, LVCFMT_LEFT);
+	m_lvLinks.InsertColumn(ADVISE_TIME,  TXT("Updated"),   150, LVCFMT_LEFT);
+	m_lvLinks.InsertColumn(ADVISE_COUNT, TXT("# Advises"), 100, LVCFMT_RIGHT);
 
 	// Populate formats combo with text-based formats.
 	m_cbFormat.Add(CClipboard::FormatName(CF_TEXT),        CF_TEXT);
@@ -153,7 +153,7 @@ void CAppDlg::OnTimer(uint /*nTimerID*/)
 	DWORD dwNow = ::GetTickCount();
 
 	// Clear all stale indicators.
-	for (int i = 0; i < m_lvLinks.ItemCount(); ++i)
+	for (size_t i = 0; i < m_lvLinks.ItemCount(); ++i)
 	{
 		// Indicator on?
 		if (m_lvLinks.ItemImage(i) == IMG_FLASH)
@@ -187,11 +187,11 @@ void CAppDlg::OnTimer(uint /*nTimerID*/)
 void CAppDlg::AddLink(CDDELink* pLink)
 {
 	// Add the new link.
-	int n = m_lvLinks.AppendItem(pLink->Item(), IMG_BLANK);
+	size_t n = m_lvLinks.AppendItem(pLink->Item(), IMG_BLANK);
 
-	m_lvLinks.ItemText(n, LAST_VALUE,   "(none)");
-	m_lvLinks.ItemText(n, ADVISE_TIME,  "(none)");
-	m_lvLinks.ItemText(n, ADVISE_COUNT, "0");
+	m_lvLinks.ItemText(n, LAST_VALUE,   TXT("(none)"));
+	m_lvLinks.ItemText(n, ADVISE_TIME,  TXT("(none)"));
+	m_lvLinks.ItemText(n, ADVISE_COUNT, TXT("0"));
 	m_lvLinks.ItemPtr (n, pLink);
 
 	// Duplicate link?
@@ -202,7 +202,7 @@ void CAppDlg::AddLink(CDDELink* pLink)
 		// Copy value from 1st link.
 		m_lvLinks.ItemText(n, LAST_VALUE,   m_lvLinks.ItemText(o, LAST_VALUE));
 		m_lvLinks.ItemText(n, ADVISE_TIME,  m_lvLinks.ItemText(o, ADVISE_TIME));
-		m_lvLinks.ItemText(n, ADVISE_COUNT, "0");
+		m_lvLinks.ItemText(n, ADVISE_COUNT, TXT("0"));
 	}
 
 	// Add to link data map.
@@ -248,9 +248,9 @@ void CAppDlg::UpdateLink(CDDELink* pLink, const CBuffer& oValue, bool bIsAdvise)
 	CString strCount = CStrCvt::FormatInt(pLinkData->m_nAdviseCount);
 
 	//Template shorthands.
-	typedef CListView::CUIntArray::const_iterator CIter;
+	typedef CListView::Items::const_iterator CIter;
 
-	CListView::CUIntArray vItems;
+	CListView::Items vItems;
 
 	// Find all items referencing the link.
 	m_lvLinks.FindAllItems(pLink, vItems);
@@ -279,12 +279,12 @@ void CAppDlg::UpdateLink(CDDELink* pLink, const CBuffer& oValue, bool bIsAdvise)
 *******************************************************************************
 */
 
-void CAppDlg::RemoveLink(int nItem)
+void CAppDlg::RemoveLink(size_t nItem)
 {
 	ASSERT(nItem != LB_ERR);
 
 	// Save current selection.
-	int nSel = m_lvLinks.Selection();
+	size_t nSel = m_lvLinks.Selection();
 
 	// Delete listview item.
 	CDDELink* pDDELink = GetLink(nItem);
@@ -553,9 +553,9 @@ int CALLBACK CAppDlg::Compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 	if (pDialog->m_nSortCol == ITEM_NAME)
 	{
 		if (pDialog->m_bSortAsc)
-			return strcmp(pLink1->Item(), pLink2->Item());
+			return tstrcmp(pLink1->Item(), pLink2->Item());
 		else
-			return strcmp(pLink2->Item(), pLink1->Item());
+			return tstrcmp(pLink2->Item(), pLink1->Item());
 	}
 	// Sort by last advise time?
 	else if (pDialog->m_nSortCol == ADVISE_TIME)
@@ -682,10 +682,10 @@ void CAppDlg::EnableUI(bool bEnable)
 
 void CAppDlg::UpdateTitle()
 {
-	CString strTitle = "Active Links";
+	CString strTitle = TXT("Active Links");
 
 	if (m_lvLinks.ItemCount() > 0)
-		strTitle += " [" + CStrCvt::FormatInt(m_lvLinks.ItemCount()) + "]";
+		strTitle += TXT(" [") + CStrCvt::FormatInt(m_lvLinks.ItemCount()) + TXT("]");
 
 	m_txLinks.Title(strTitle);
 }
@@ -753,7 +753,7 @@ void CAppDlg::OnItemChanged()
 	// Update state of full value button.
 	if (!m_strLastItem.Empty())
 	{
-		m_strLastItem = "";
+		m_strLastItem = TXT("");
 		EnableFullValue(false);
 	}
 }
@@ -775,7 +775,7 @@ void CAppDlg::OnValueChanged()
 	// Update state of full value button.
 	if (!m_strLastItem.Empty())
 	{
-		m_strLastItem = "";
+		m_strLastItem = TXT("");
 		EnableFullValue(false);
 	}
 }

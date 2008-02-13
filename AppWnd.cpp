@@ -100,7 +100,7 @@ bool CAppWnd::OnQueryClose()
 	// Inside a DDE request?
 	if (App.m_bInDDECall)
 	{
-		App.m_AppWnd.AlertMsg("You cannot close DDE Query while a request is in progress.");
+		App.m_AppWnd.AlertMsg(TXT("You cannot close DDE Query while a request is in progress."));
 		return false;
 	}
 
@@ -148,9 +148,9 @@ void CAppWnd::UpdateTitle()
 	// Append connection, if open.
 	if (App.m_pDDEConv != NULL)
 	{
-		strTitle += " - ";
+		strTitle += TXT(" - ");
 		strTitle += App.m_strLastService;
-		strTitle += "|";
+		strTitle += TXT("|");
 		strTitle += App.m_strLastTopic;
 	}
 

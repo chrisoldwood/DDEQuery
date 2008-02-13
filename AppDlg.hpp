@@ -56,7 +56,7 @@ public:
 
 	void AddLink(CDDELink* pLink);
 	void UpdateLink(CDDELink* pLink, const CBuffer& oValue, bool bIsAdvise);
-	void RemoveLink(int nItem);
+	void RemoveLink(size_t nItem);
 	void RemoveAllLinks();
 
 	bool    IsLinkSelected();
@@ -64,8 +64,8 @@ public:
 	CBuffer GetLinkLastValue(CDDELink* pLink);
 
 	CDDELink* GetFirstSelLink();
-	CDDELink* GetLink(int nItem);
-	uint      GetAllSelLinks(CListView::CUIntArray& vItems);
+	CDDELink* GetLink(size_t nItem);
+	size_t    GetAllSelLinks(CListView::Items& vItems);
 
 	void EnableUI(bool bEnable);
 
@@ -201,12 +201,12 @@ inline bool CAppDlg::IsLinkSelected()
 	return m_lvLinks.IsSelection();
 }
 
-inline uint CAppDlg::GetAllSelLinks(CListView::CUIntArray& vItems)
+inline size_t CAppDlg::GetAllSelLinks(CListView::Items& vItems)
 {
 	return m_lvLinks.Selections(vItems);
 }
 
-inline CDDELink* CAppDlg::GetLink(int nItem)
+inline CDDELink* CAppDlg::GetLink(size_t nItem)
 {
 	ASSERT(nItem != LB_ERR);
 

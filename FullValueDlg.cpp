@@ -74,8 +74,8 @@ void CFullValueDlg::OnInitDialog()
 	m_dlgBinaryView.RunModeless(*this);
 
 	// Add views to tab control.
-	m_tcViews.AddTab("Text",   m_dlgTextView);
-	m_tcViews.AddTab("Binary", m_dlgBinaryView);
+	m_tcViews.AddTab(TXT("Text"),   m_dlgTextView);
+	m_tcViews.AddTab(TXT("Binary"), m_dlgBinaryView);
 
 	// Display default view.
 	m_tcViews.CurSel((App.GetFormatType(m_nFormat) == CF_TYPE_BINARY) ? 1 : 0);
