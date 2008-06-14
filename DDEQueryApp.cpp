@@ -113,9 +113,9 @@ bool CDDEQueryApp::OnOpen()
 		m_pDDEClient->Initialise();
 		m_pDDEClient->AddListener(this);
 	}
-	catch (CException& e)
+	catch (Core::Exception& e)
 	{
-		FatalMsg(TXT("%s"), e.ErrorText());
+		FatalMsg(TXT("%s"), e.What());
 		return false;
 	}
 

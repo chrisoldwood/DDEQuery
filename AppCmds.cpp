@@ -274,7 +274,7 @@ void CAppCmds::OnServerConnect(const CString& strService, const CString& strTopi
 	{
 		OnServerDisconnect();
 
-		App.AlertMsg(TXT("%s"), e.ErrorText());
+		App.AlertMsg(TXT("%s"), e.What());
 	}
 
 	UpdateUI();
@@ -337,7 +337,7 @@ void CAppCmds::OnCommandRequest()
 		if (!App.m_pDDEConv->IsConnected())
 			DoServerDisconnect();
 
-		App.AlertMsg(TXT("%s"), e.ErrorText());
+		App.AlertMsg(TXT("%s"), e.What());
 	}
 
 	App.m_AppWnd.ShowFlashIcon(false);
@@ -387,7 +387,7 @@ void CAppCmds::OnCommandPoke()
 		if (!App.m_pDDEConv->IsConnected())
 			DoServerDisconnect();
 
-		App.AlertMsg(TXT("%s"), e.ErrorText());
+		App.AlertMsg(TXT("%s"), e.What());
 	}
 
 	App.m_AppWnd.ShowFlashIcon(false);
@@ -436,7 +436,7 @@ void CAppCmds::OnCommandExecute()
 		if (!App.m_pDDEConv->IsConnected())
 			DoServerDisconnect();
 
-		App.AlertMsg(TXT("%s"), e.ErrorText());
+		App.AlertMsg(TXT("%s"), e.What());
 	}
 
 	App.m_AppWnd.ShowFlashIcon(false);
@@ -497,7 +497,7 @@ void CAppCmds::OnLinkAdvise()
 		if (!App.m_pDDEConv->IsConnected())
 			DoServerDisconnect();
 
-		App.AlertMsg(TXT("%s"), e.ErrorText());
+		App.AlertMsg(TXT("%s"), e.What());
 	}
 
 	UpdateUI();
@@ -769,7 +769,7 @@ void CAppCmds::OnLinkOpenFile()
 	catch(CFileException& e)
 	{
 		// Notify user.
-		App.AlertMsg(TXT("%s"), e.ErrorText());
+		App.AlertMsg(TXT("%s"), e.What());
 		return;
 	}
 
@@ -858,7 +858,7 @@ void CAppCmds::OnLinkSaveFile()
 	catch(CFileException& e)
 	{
 		// Notify user.
-		App.AlertMsg(TXT("%s"), e.ErrorText());
+		App.AlertMsg(TXT("%s"), e.What());
 		return;
 	}
 }
