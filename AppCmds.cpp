@@ -140,7 +140,7 @@ void CAppCmds::OnServerConnect()
 void CAppCmds::OnServerDisconnect()
 {
 	// Inside DDE call?
-	if ((App.m_pDDEConv != NULL) && (App.m_bInDDECall))
+	if ((App.m_pDDEConv.Get() != nullptr) && (App.m_bInDDECall))
 	{
 		App.m_AppWnd.AlertMsg(TXT("You cannot close the connection while a request is in progress."));
 		return;
@@ -163,13 +163,8 @@ void CAppCmds::OnServerDisconnect()
 
 void CAppCmds::DoServerDisconnect()
 {
-	// Conversation open.
-	if (App.m_pDDEConv != NULL)
-	{
-		App.m_pDDEClient->DestroyConversation(App.m_pDDEConv);
-
-		App.m_pDDEConv = NULL;
-	}
+	// Clear conversation, if open.
+	App.m_pDDEConv.Release();
 
 	// Clear the links listview.
 	App.m_AppWnd.m_AppDlg.RemoveAllLinks();
@@ -247,7 +242,7 @@ void CAppCmds::OnServerConnect(const CString& strService, const CString& strTopi
 		// Close existing conversation.
 		OnServerDisconnect();
 
-		ASSERT(App.m_pDDEConv == NULL);
+		ASSERT(App.m_pDDEConv.Get() == nullptr);
 
 		CAutoBool oLock(&App.m_bInDDECall);
 
@@ -255,7 +250,7 @@ void CAppCmds::OnServerConnect(const CString& strService, const CString& strTopi
 		App.m_AppWnd.ShowFlashIcon(true);
 
 		// Create conversation.
-		App.m_pDDEConv = App.m_pDDEClient->CreateConversation(strService, strTopic);
+		App.m_pDDEConv = DDE::CltConvPtr(App.m_pDDEClient->CreateConversation(strService, strTopic));
 
 		App.m_pDDEConv->SetTimeOut(App.m_dwDDETimeOut);
 
@@ -296,7 +291,7 @@ void CAppCmds::OnServerConnect(const CString& strService, const CString& strTopi
 
 void CAppCmds::OnCommandRequest()
 {
-	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_pDDEConv.Get() != nullptr);
 
 	// Get the DDE item.
 	CString strItem   = App.m_AppWnd.m_AppDlg.GetItemName();
@@ -357,7 +352,7 @@ void CAppCmds::OnCommandRequest()
 
 void CAppCmds::OnCommandPoke()
 {
-	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_pDDEConv.Get() != nullptr);
 
 	// Get the DDE item and value.
 	CString strItem  = App.m_AppWnd.m_AppDlg.GetItemName();
@@ -407,7 +402,7 @@ void CAppCmds::OnCommandPoke()
 
 void CAppCmds::OnCommandExecute()
 {
-	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_pDDEConv.Get() != nullptr);
 
 	// Get the DDE command.
 	CString strCmd = App.m_AppWnd.m_AppDlg.GetItemName();
@@ -456,7 +451,7 @@ void CAppCmds::OnCommandExecute()
 
 void CAppCmds::OnLinkAdvise()
 {
-	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_pDDEConv.Get() != nullptr);
 
 	// Get the DDE item.
 	CString strItem = App.m_AppWnd.m_AppDlg.GetItemName();
@@ -518,7 +513,7 @@ void CAppCmds::OnLinkAdvise()
 
 void CAppCmds::OnLinkUnadvise()
 {
-	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_pDDEConv.Get() != nullptr);
 	ASSERT(App.m_AppWnd.m_AppDlg.IsLinkSelected());
 
 	//Template shorthands.
@@ -569,7 +564,7 @@ void CAppCmds::OnLinkUnadvise()
 
 void CAppCmds::OnLinkUnadviseAll()
 {
-	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_pDDEConv.Get() != nullptr);
 
 	// Remove all links from links listview.
 	App.m_AppWnd.m_AppDlg.RemoveAllLinks();
@@ -600,7 +595,7 @@ void CAppCmds::OnLinkUnadviseAll()
 
 void CAppCmds::OnLinkReqValues()
 {
-	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_pDDEConv.Get() != nullptr);
 
 	CDDECltLinks vLinks;
 
@@ -648,7 +643,7 @@ void CAppCmds::OnLinkReqValues()
 
 void CAppCmds::OnLinkCopyClipboard()
 {
-	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_pDDEConv.Get() != nullptr);
 	ASSERT(App.m_AppWnd.m_AppDlg.IsLinkSelected());
 
 	// Shortcut to dialog.
@@ -677,7 +672,7 @@ void CAppCmds::OnLinkCopyClipboard()
 
 void CAppCmds::OnLinkCopyItem()
 {
-	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_pDDEConv.Get() != nullptr);
 	ASSERT(App.m_AppWnd.m_AppDlg.IsLinkSelected());
 
 	// Shortcut to dialog.
@@ -706,7 +701,7 @@ void CAppCmds::OnLinkCopyItem()
 
 void CAppCmds::OnLinkPasteItem()
 {
-	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_pDDEConv.Get() != nullptr);
 
 	CString strService, strTopic, strItem;
 
@@ -731,7 +726,7 @@ void CAppCmds::OnLinkPasteItem()
 
 void CAppCmds::OnLinkOpenFile()
 {
-	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_pDDEConv.Get() != nullptr);
 
 	CPath strPath;
 
@@ -827,7 +822,7 @@ void CAppCmds::OnLinkOpenFile()
 
 void CAppCmds::OnLinkSaveFile()
 {
-	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_pDDEConv.Get() != nullptr);
 
 	CPath strPath;
 
@@ -878,7 +873,7 @@ void CAppCmds::OnLinkSaveFile()
 
 void CAppCmds::OnLinkShowValue()
 {
-	ASSERT(App.m_pDDEConv != NULL);
+	ASSERT(App.m_pDDEConv.Get() != nullptr);
 	ASSERT(App.m_AppWnd.m_AppDlg.IsLinkSelected());
 
 	// Shortcut to dialog.
@@ -918,7 +913,7 @@ void CAppCmds::OnOptionsPrefs()
 	Dlg.RunModal(App.m_rMainWnd);
 
 	// Update conversation, if active.
-	if (App.m_pDDEConv != NULL)
+	if (App.m_pDDEConv.Get() != nullptr)
 		App.m_pDDEConv->SetTimeOut(App.m_dwDDETimeOut);
 }
 
@@ -955,7 +950,7 @@ void CAppCmds::OnHelpAbout()
 
 void CAppCmds::UpdateUI()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 
 	App.m_AppWnd.m_AppDlg.EnableUI(bConvOpen);
 
@@ -982,42 +977,42 @@ void CAppCmds::OnUIServerConnect()
 
 void CAppCmds::OnUIServerDisconnect()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_SERVER_DISCONNECT, bConvOpen);
 }
 
 void CAppCmds::OnUICommandRequest()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_COMMAND_REQUEST, bConvOpen);
 }
 
 void CAppCmds::OnUICommandPoke()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_COMMAND_POKE, bConvOpen);
 }
 
 void CAppCmds::OnUICommandExecute()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_COMMAND_EXECUTE, bConvOpen);
 }
 
 void CAppCmds::OnUILinkAdvise()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_ADVISE, bConvOpen);
 }
 
 void CAppCmds::OnUILinkUnadvise()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 	bool bLinkSeln = (App.m_AppWnd.m_AppDlg.IsLinkSelected());
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_UNADVISE, bConvOpen && bLinkSeln);
@@ -1025,7 +1020,7 @@ void CAppCmds::OnUILinkUnadvise()
 
 void CAppCmds::OnUILinkUnadviseAll()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 	bool bAnyLinks = ((bConvOpen) && (App.m_pDDEConv->NumLinks() > 0));
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_UNADVISE_ALL, bConvOpen && bAnyLinks);
@@ -1033,7 +1028,7 @@ void CAppCmds::OnUILinkUnadviseAll()
 
 void CAppCmds::OnUILinkReqValues()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 	bool bAnyLinks = ((bConvOpen) && (App.m_pDDEConv->NumLinks() > 0));
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_REQ_VALUES, bConvOpen && bAnyLinks);
@@ -1041,7 +1036,7 @@ void CAppCmds::OnUILinkReqValues()
 
 void CAppCmds::OnUILinkCopyClipboard()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 	bool bLinkSeln = (App.m_AppWnd.m_AppDlg.IsLinkSelected());
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_COPY_CLIPBOARD, bConvOpen && bLinkSeln);
@@ -1049,7 +1044,7 @@ void CAppCmds::OnUILinkCopyClipboard()
 
 void CAppCmds::OnUILinkCopyItem()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 	bool bLinkSeln = (App.m_AppWnd.m_AppDlg.IsLinkSelected());
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_COPY_ITEM, bConvOpen && bLinkSeln);
@@ -1057,21 +1052,21 @@ void CAppCmds::OnUILinkCopyItem()
 
 void CAppCmds::OnUILinkPasteItem()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_PASTE_ITEM, bConvOpen);
 }
 
 void CAppCmds::OnUILinkOpenFile()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_OPEN_FILE, bConvOpen);
 }
 
 void CAppCmds::OnUILinkSaveFile()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 	bool bAnyLinks = ((bConvOpen) && (App.m_pDDEConv->NumLinks() > 0));
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_SAVE_FILE, bConvOpen && bAnyLinks);
@@ -1079,7 +1074,7 @@ void CAppCmds::OnUILinkSaveFile()
 
 void CAppCmds::OnUILinkShowValue()
 {
-	bool bConvOpen = (App.m_pDDEConv != NULL);
+	bool bConvOpen = (App.m_pDDEConv.Get() != nullptr);
 	bool bLinkSeln = (App.m_AppWnd.m_AppDlg.IsLinkSelected());
 
 	App.m_AppWnd.Menu()->EnableCmd(ID_LINK_SHOW_VALUE, bConvOpen && bLinkSeln);

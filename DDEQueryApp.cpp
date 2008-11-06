@@ -63,7 +63,6 @@ CDDEQueryApp::CDDEQueryApp()
 	, m_oMRUList(5)
 	, m_nFlashTime(DEF_FLASH_TIME)
 	, m_dwDDETimeOut(DEF_DDE_TIMEOUT)
-	, m_pDDEClient(CDDEClient::Instance())
 	, m_pDDEConv(NULL)
 	, m_bInDDECall(false)
 {
@@ -110,7 +109,7 @@ bool CDDEQueryApp::OnOpen()
 	try
 	{
 		// Initialise the DDE client.
-		m_pDDEClient->Initialise();
+		m_pDDEClient = DDE::ClientPtr(new CDDEClient);
 		m_pDDEClient->AddListener(this);
 	}
 	catch (Core::Exception& e)
@@ -158,7 +157,7 @@ bool CDDEQueryApp::OnClose()
 {
 	// Unnitialise the DDE client.
 	m_pDDEClient->RemoveListener(this);
-	m_pDDEClient->Uninitialise();
+	m_pDDEClient.Reset();
 
 	// Save settings.
 	SaveConfig();
@@ -271,13 +270,13 @@ void CDDEQueryApp::SaveConfig()
 
 void CDDEQueryApp::OnDisconnect(CDDECltConv* /*pConv*/)
 {
-	ASSERT(m_pDDEConv != NULL);
+	ASSERT(m_pDDEConv.Get() != nullptr);
 
 	// Cleanup, if possible.
 	if (!m_bInDDECall)
 		m_AppCmds.DoServerDisconnect();
 	else
-		m_pDDEClient->DestroyConversation(m_pDDEConv);
+		m_pDDEConv.Release();
 
 	// Notify user.
 	AlertMsg(TXT("Lost connection to DDE server."));
@@ -298,7 +297,7 @@ void CDDEQueryApp::OnDisconnect(CDDECltConv* /*pConv*/)
 
 void CDDEQueryApp::OnAdvise(CDDELink* pLink, const CDDEData* pData)
 {
-	ASSERT(pLink->Conversation() == m_pDDEConv);
+	ASSERT(pLink->Conversation() == m_pDDEConv.Get());
 
 	CBuffer oData;
 

@@ -23,9 +23,8 @@
 #include <WCL/IniFile.hpp>
 #include <WCL/MRUList.hpp>
 #include "AppTypes.hpp"
-
-// Forward declarations.
-class CDDEClient;
+#include <NCL/DDEClient.hpp>
+#include <NCL/DDECltConvPtr.hpp>
 
 /******************************************************************************
 ** 
@@ -59,8 +58,8 @@ public:
 	CRect			m_rcFullValueDlg;	// Last window size of "Full Value" dialog.
 	DWORD			m_dwDDETimeOut;		// DDE call timeout.
 
-	CDDEClient*		m_pDDEClient;		// DDE Client.
-	CDDECltConv*	m_pDDEConv;			// Current conversation.
+	DDE::ClientPtr	m_pDDEClient;		// DDE Client.
+	DDE::CltConvPtr	m_pDDEConv;			// Current conversation.
 
 	bool			m_bInDDECall;		// Inside a DDE call?
 
