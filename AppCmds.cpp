@@ -605,7 +605,7 @@ void CAppCmds::OnLinkReqValues()
 	App.m_AppWnd.ShowFlashIcon(true);
 
 	// For all links...
-	for (size_t i = 0; i < vLinks.Size(); ++i) 
+	for (size_t i = 0, n = vLinks.size(); i != n; ++i) 
 	{
 		CDDELink* pLink = vLinks[i];
 

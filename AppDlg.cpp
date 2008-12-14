@@ -15,6 +15,7 @@
 #include <WCL/Clipboard.hpp>
 #include <NCL/DDELink.hpp>
 #include <WCL/StrCvt.hpp>
+#include <WCL/ScreenDC.hpp>
 
 /******************************************************************************
 ** Method:		Default constructor.
@@ -32,6 +33,7 @@ CAppDlg::CAppDlg()
 	: CMainDlg(IDD_MAIN)
 	, m_nSortCol(0)
 	, m_bSortAsc(false)
+	, m_font(ANSI_FIXED_FONT)
 {
 	DEFINE_CTRL_TABLE
 		CTRL(IDC_ITEM_LABEL,	&m_txItem  )
@@ -80,12 +82,14 @@ void CAppDlg::OnInitDialog()
 {
 	m_btnValue.Enable(false);
 
+	m_font.Create(CLogFont(TXT("Lucida Console"), -CScreenDC().PointSizeToPixels(10)));
+
 	// Set edit box styles.
-	m_ebItem.Font(CFont(ANSI_FIXED_FONT));
-	m_ebValue.Font(CFont(ANSI_FIXED_FONT));
+	m_ebItem.Font(m_font);
+	m_ebValue.Font(m_font);
 
 	// Set links listview style.
-	m_lvLinks.Font(CFont(ANSI_FIXED_FONT));
+	m_lvLinks.Font(m_font);
 	m_lvLinks.FullRowSelect(true);
 //	m_lvLinks.GridLines(true);
 
@@ -95,7 +99,7 @@ void CAppDlg::OnInitDialog()
 	// Create links lisview columns.
 	m_lvLinks.InsertColumn(ITEM_NAME,    TXT("Item"),      150, LVCFMT_LEFT);
 	m_lvLinks.InsertColumn(LAST_VALUE,   TXT("Value"),     200, LVCFMT_LEFT);
-	m_lvLinks.InsertColumn(ADVISE_TIME,  TXT("Updated"),   150, LVCFMT_LEFT);
+	m_lvLinks.InsertColumn(ADVISE_TIME,  TXT("Updated"),   175, LVCFMT_LEFT);
 	m_lvLinks.InsertColumn(ADVISE_COUNT, TXT("# Advises"), 100, LVCFMT_RIGHT);
 
 	// Populate formats combo with text-based formats.
@@ -159,9 +163,10 @@ void CAppDlg::OnTimer(uint /*nTimerID*/)
 		if (m_lvLinks.ItemImage(i) == IMG_FLASH)
 		{
 			CDDELink* pDDELink  = GetLink(i);
-			LinkData* pLinkData = NULL;
 
-			m_oLinksData.Find(pDDELink, pLinkData);
+			ASSERT(m_oLinksData.find(pDDELink) != m_oLinksData.end());
+
+			LinkData* pLinkData = m_oLinksData[pDDELink];
 
 			ASSERT(pLinkData != NULL);
 
@@ -206,8 +211,8 @@ void CAppDlg::AddLink(CDDELink* pLink)
 	}
 
 	// Add to link data map.
-	if (!m_oLinksData.Exists(pLink))
-		m_oLinksData.Add(pLink, new LinkData(pLink));
+	if (m_oLinksData.find(pLink) == m_oLinksData.end())
+		m_oLinksData.insert(std::make_pair(pLink, new LinkData(pLink)));
 
 	UpdateTitle();
 }
@@ -228,14 +233,17 @@ void CAppDlg::AddLink(CDDELink* pLink)
 
 void CAppDlg::UpdateLink(CDDELink* pLink, const CBuffer& oValue, bool bIsAdvise)
 {
-	LinkData* pLinkData = NULL;
 
 	// Find links advise data.
 	// NB: Could have just been unadvised.
-	m_oLinksData.Find(pLink, pLinkData);
+	CLinksData::iterator it = m_oLinksData.find(pLink);
 
-	if (pLinkData == NULL)
+	if (it == m_oLinksData.end())
 		return;
+
+	LinkData* pLinkData = it->second;
+
+	ASSERT(pLinkData != nullptr);
 
 	// Update link data entry.
 	if (bIsAdvise)
@@ -303,18 +311,20 @@ void CAppDlg::RemoveLink(size_t nItem)
 	// Last reference to link?
 	if (m_lvLinks.FindItem(pDDELink) == LB_ERR)
 	{
-		LinkData* pLinkData = NULL;
+		CLinksData::iterator it = m_oLinksData.find(pDDELink);
 
 		// Remove entry from link data map.
-		if (m_oLinksData.Find(pDDELink, pLinkData))
+		if (it != m_oLinksData.end())
 		{
+			LinkData* pLinkData = it->second;
+
 			delete pLinkData;
 
-			m_oLinksData.Remove(pDDELink);
+			m_oLinksData.erase(it);
 		}
 	}
 
-	ASSERT(m_lvLinks.ItemCount() >= m_oLinksData.Count());
+	ASSERT(m_lvLinks.ItemCount() >= m_oLinksData.size());
 
 	UpdateTitle();
 }
@@ -333,15 +343,11 @@ void CAppDlg::RemoveLink(size_t nItem)
 
 void CAppDlg::RemoveAllLinks()
 {
-	CLinksDataIter oIter(m_oLinksData);
-	CDDELink*      pDDELink  = NULL;
-	LinkData*      pLinkData = NULL;
-
 	// Clear link data map.
-	while (oIter.Next(pDDELink, pLinkData))
-		delete pLinkData;
+	for (CLinksData::iterator it = m_oLinksData.begin(); it != m_oLinksData.end(); ++it)
+		delete it->second;
 
-	m_oLinksData.RemoveAll();
+	m_oLinksData.clear();
 
 	// Clear listview.
 	m_lvLinks.DeleteAllItems();
@@ -418,11 +424,10 @@ void CAppDlg::SetItemValue(const CBuffer& oBuffer, uint nFormat)
 bool CAppDlg::IsLinkUnadvised(CDDELink* pLink)
 {
 	ASSERT(pLink != NULL);
-
-	LinkData* pLinkData = NULL;
+	ASSERT(m_oLinksData.find(pLink) != m_oLinksData.end());
 
 	// Query advise count in link data.
-	m_oLinksData.Find(pLink, pLinkData);
+	LinkData* pLinkData = m_oLinksData[pLink];
 
 	ASSERT(pLinkData != NULL);
 
@@ -444,11 +449,10 @@ bool CAppDlg::IsLinkUnadvised(CDDELink* pLink)
 CBuffer CAppDlg::GetLinkLastValue(CDDELink* pLink)
 {
 	ASSERT(pLink != NULL);
-
-	LinkData* pLinkData = NULL;
+	ASSERT(m_oLinksData.find(pLink) != m_oLinksData.end());
 
 	// Query advise count in link data.
-	m_oLinksData.Find(pLink, pLinkData);
+	LinkData* pLinkData = m_oLinksData[pLink];
 
 	ASSERT(pLinkData != NULL);
 
@@ -548,7 +552,15 @@ int CALLBACK CAppDlg::Compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 	CDDELink* pLink1  = reinterpret_cast<CDDELink*>(lParam1);
 	CDDELink* pLink2  = reinterpret_cast<CDDELink*>(lParam2);
 	CAppDlg*  pDialog = reinterpret_cast<CAppDlg*>(lParamSort);
+
+	ASSERT(pDialog->m_oLinksData.find(pLink1) != pDialog->m_oLinksData.end());
+	ASSERT(pDialog->m_oLinksData.find(pLink2) != pDialog->m_oLinksData.end());
 	
+	LinkData* pLinkData1 = pDialog->m_oLinksData[pLink1];
+	LinkData* pLinkData2 = pDialog->m_oLinksData[pLink2];
+
+	ASSERT((pLinkData1 != NULL) && (pLinkData2 != NULL));
+
 	// Sort by link name?
 	if (pDialog->m_nSortCol == ITEM_NAME)
 	{
@@ -560,14 +572,6 @@ int CALLBACK CAppDlg::Compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 	// Sort by last advise time?
 	else if (pDialog->m_nSortCol == ADVISE_TIME)
 	{
-		LinkData* pLinkData1 = NULL;
-		LinkData* pLinkData2 = NULL;
-
-		pDialog->m_oLinksData.Find(pLink1, pLinkData1);
-		pDialog->m_oLinksData.Find(pLink2, pLinkData2);
-
-		ASSERT((pLinkData1 != NULL) && (pLinkData2 != NULL));
-
 		if (pDialog->m_bSortAsc)
 			return pLinkData1->m_dwLastAdvise - pLinkData2->m_dwLastAdvise;
 		else
@@ -576,14 +580,6 @@ int CALLBACK CAppDlg::Compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 	// Sort by advise count?
 	else if (pDialog->m_nSortCol == ADVISE_COUNT)
 	{
-		LinkData* pLinkData1 = NULL;
-		LinkData* pLinkData2 = NULL;
-
-		pDialog->m_oLinksData.Find(pLink1, pLinkData1);
-		pDialog->m_oLinksData.Find(pLink2, pLinkData2);
-
-		ASSERT((pLinkData1 != NULL) && (pLinkData2 != NULL));
-
 		if (pDialog->m_bSortAsc)
 			return pLinkData1->m_nAdviseCount - pLinkData2->m_nAdviseCount;
 		else

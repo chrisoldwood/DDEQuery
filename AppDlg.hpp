@@ -19,8 +19,7 @@
 #include <WCL/MainDlg.hpp>
 #include <WCL/Buffer.hpp>
 #include <WCL/DateTime.hpp>
-#include <Legacy/TMap.hpp>
-#include <Legacy/TMapIter.hpp>
+#include <map>
 #include <WCL/CommonUI.hpp>
 
 // Forward declarations.
@@ -95,8 +94,7 @@ protected:
 	};
 
 	// Template shorthands.
-	typedef TMap<CDDELink*, LinkData*> CLinksData;
-	typedef TMapIter<CDDELink*, LinkData*> CLinksDataIter;
+	typedef std::map<CDDELink*, LinkData*> CLinksData;
 
 	//
 	// Members.
@@ -107,6 +105,7 @@ protected:
 	CString		m_strLastItem;
 	CBuffer		m_oLastValue;
 	uint		m_nLastFormat;
+	CFont		m_font;				//!< The font to use for the controls.
 
 	//
 	// Controls.
