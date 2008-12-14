@@ -1,10 +1,1 @@
-- Command line interface for scripting.
-  e.g. DDEQuery -c "REUTER|IDN" -r "GBP=,[BID,ASK]"
-  or DDEQuery -c "REUTER|IDN" -f RICList.txt
-  or DDEQuery -s Script.txt
-
-- Show format on links.
-
-- Make update datetime column bigger by default.
-
-- Not obvious whether execute command is in item or value.
+- Show clipboard format in links view.
