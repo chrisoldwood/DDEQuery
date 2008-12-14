@@ -132,9 +132,6 @@
 			ReferencedProjectIdentifier="{790BC113-52FB-4565-8968-79B8B011C520}"
 			Name="Core"/>
 		<ProjectReference
-			ReferencedProjectIdentifier="{AED77F84-49CF-4B84-B319-2D07025ECA06}"
-			Name="Legacy"/>
-		<ProjectReference
 			ReferencedProjectIdentifier="{FAB8D717-85EC-4896-B5DC-FDF0A0B67C92}"
 			Name="NCL"/>
 		<ProjectReference
