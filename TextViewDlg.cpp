@@ -122,5 +122,5 @@ void CTextViewDlg::OnCtlColour(uint nCtlClrMsg, HDC hDC, HWND hCtlWnd)
 void CTextViewDlg::OnValueSetFocus()
 {
 	// Remove any selection.
-	m_ebValue.Select(-1, 0);
+	m_ebValue.Select(Core::npos, 0);
 }
