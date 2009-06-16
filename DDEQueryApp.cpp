@@ -17,6 +17,7 @@
 #include <NCL/DDEData.hpp>
 #include <WCL/Clipboard.hpp>
 #include <Core/AnsiWide.hpp>
+#include <malloc.h>
 
 /******************************************************************************
 **
