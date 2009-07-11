@@ -146,7 +146,7 @@ void CAppWnd::UpdateTitle()
 	CString strTitle = App.m_strTitle;
 
 	// Append connection, if open.
-	if (App.m_pDDEConv.Get() != nullptr)
+	if (App.m_pDDEConv.get() != nullptr)
 	{
 		strTitle += TXT(" - ");
 		strTitle += App.m_strLastService;

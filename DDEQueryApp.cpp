@@ -115,7 +115,7 @@ bool CDDEQueryApp::OnOpen()
 	}
 	catch (Core::Exception& e)
 	{
-		FatalMsg(TXT("%s"), e.What());
+		FatalMsg(TXT("%s"), e.twhat());
 		return false;
 	}
 
@@ -158,7 +158,7 @@ bool CDDEQueryApp::OnClose()
 {
 	// Unnitialise the DDE client.
 	m_pDDEClient->RemoveListener(this);
-	m_pDDEClient.Reset();
+	m_pDDEClient.reset();
 
 	// Save settings.
 	SaveConfig();
@@ -271,7 +271,7 @@ void CDDEQueryApp::SaveConfig()
 
 void CDDEQueryApp::OnDisconnect(CDDECltConv* /*pConv*/)
 {
-	ASSERT(m_pDDEConv.Get() != nullptr);
+	ASSERT(m_pDDEConv.get() != nullptr);
 
 	// Cleanup, if possible.
 	if (!m_bInDDECall)
@@ -298,7 +298,7 @@ void CDDEQueryApp::OnDisconnect(CDDECltConv* /*pConv*/)
 
 void CDDEQueryApp::OnAdvise(CDDELink* pLink, const CDDEData* pData)
 {
-	ASSERT(pLink->Conversation() == m_pDDEConv.Get());
+	ASSERT(pLink->Conversation() == m_pDDEConv.get());
 
 	CBuffer oData;
 
