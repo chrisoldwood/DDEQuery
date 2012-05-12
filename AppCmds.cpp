@@ -768,7 +768,7 @@ void CAppCmds::OnLinkOpenFile()
 		return;
 	}
 
-	uint nErrors = astrLinks.Size();
+	size_t nErrors = astrLinks.Size();
 
 	// Update status bar.
 	App.m_AppWnd.ShowFlashIcon(true);

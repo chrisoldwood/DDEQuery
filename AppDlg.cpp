@@ -202,7 +202,7 @@ void CAppDlg::AddLink(CDDELink* pLink)
 	// Duplicate link?
 	if (m_lvLinks.FindItem(pLink) != n)
 	{
-		int o = m_lvLinks.FindItem(pLink);
+		size_t o = m_lvLinks.FindItem(pLink);
 
 		// Copy value from 1st link.
 		m_lvLinks.ItemText(n, LAST_VALUE,   m_lvLinks.ItemText(o, LAST_VALUE));
@@ -266,7 +266,7 @@ void CAppDlg::UpdateLink(CDDELink* pLink, const CBuffer& oValue, bool bIsAdvise)
 	// Update items.
 	for (CIter oIter = vItems.begin(); oIter != vItems.end(); ++oIter)
 	{
-		uint nItem = *oIter;
+		size_t nItem = *oIter;
 
 		m_lvLinks.ItemImage(nItem, (bIsAdvise) ? IMG_FLASH : IMG_BLANK);
 		m_lvLinks.ItemText (nItem, LAST_VALUE,   App.GetDisplayValue(oValue, pLink->Format(), true));
@@ -369,16 +369,16 @@ void CAppDlg::RemoveAllLinks()
 
 uint CAppDlg::GetSelFormat()
 {
-	uint nFormat = NULL;
+	uint nFormat = CF_NONE;
 
 	// Standard format selected?
 	if (m_cbFormat.CurSel() != CB_ERR)
-		return m_cbFormat.ItemData(m_cbFormat.CurSel());
+		return static_cast<uint>(m_cbFormat.ItemData(m_cbFormat.CurSel()));
 
 	CString strFormat = m_cbFormat.Text();
 
 	// Standard format entered?
-	if ((nFormat = CClipboard::FormatHandle(strFormat)) != NULL)
+	if ((nFormat = CClipboard::FormatHandle(strFormat)) != CF_NONE)
 		return nFormat;
 
 	// Custom format.
@@ -475,7 +475,7 @@ CDDELink* CAppDlg::GetFirstSelLink()
 {
 	CDDELink* pLink = NULL;
 
-	int nSel = m_lvLinks.Selection();
+	size_t nSel = m_lvLinks.Selection();
 
 	if (nSel != LB_ERR)
 		pLink = GetLink(nSel);
@@ -680,8 +680,10 @@ void CAppDlg::UpdateTitle()
 {
 	CString strTitle = TXT("Active Links");
 
-	if (m_lvLinks.ItemCount() > 0)
-		strTitle += TXT(" [") + CStrCvt::FormatInt(m_lvLinks.ItemCount()) + TXT("]");
+	size_t count = m_lvLinks.ItemCount();
+
+	if (count != 0)
+		strTitle += TXT(" [") + CStrCvt::FormatInt(static_cast<int>(count)) + TXT("]");
 
 	m_txLinks.Title(strTitle);
 }

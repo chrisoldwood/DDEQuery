@@ -57,6 +57,8 @@ CConnectDlg::CConnectDlg()
 
 void CConnectDlg::OnInitDialog()
 {
+	const size_t first = 0;
+
 	try
 	{
 		CStrArray astrServers;
@@ -69,7 +71,7 @@ void CConnectDlg::OnInitDialog()
 
 		// Select 1st by default.
 		if (m_cbService.Count() > 0)
-			m_cbService.CurSel(0U);
+			m_cbService.CurSel(first);
 	}
 	catch (CDDEException& /*e*/)
 	{ }
@@ -77,7 +79,7 @@ void CConnectDlg::OnInitDialog()
 	// Select previous service name.
 	if (m_strService != TXT(""))
 	{
-		int nDefault = m_cbService.FindExact(m_strService);
+		size_t nDefault = m_cbService.FindExact(m_strService);
 
 		if (nDefault == CB_ERR)
 			nDefault = m_cbService.Add(m_strService);
@@ -91,7 +93,7 @@ void CConnectDlg::OnInitDialog()
 	// Select previous topic name.
 	if (m_strTopic != TXT(""))
 	{
-		int nDefault = m_cbTopic.FindExact(m_strTopic);
+		size_t nDefault = m_cbTopic.FindExact(m_strTopic);
 
 		if (nDefault == CB_ERR)
 			nDefault = m_cbTopic.Add(m_strTopic);
@@ -154,6 +156,8 @@ bool CConnectDlg::OnOk()
 
 void CConnectDlg::OnSelectServer()
 {
+	const size_t first = 0;
+
 	// Clear old list.
 	m_cbTopic.Reset();
 
@@ -175,7 +179,7 @@ void CConnectDlg::OnSelectServer()
 
 		// Select 1st by default.
 		if (m_cbTopic.Count() > 0)
-			m_cbTopic.CurSel(0U);
+			m_cbTopic.CurSel(first);
 	}
 	catch (CDDEException& /*e*/)
 	{ }

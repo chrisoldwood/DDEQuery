@@ -84,7 +84,7 @@ void CBinaryViewDlg::DisplayValue()
 
 	// Get access to raw value.
 	const byte* pBuffer = static_cast<const byte*>(m_pValue->Buffer());
-	uint        nSize   = m_pValue->Size();
+	uint        nSize   = static_cast<uint>(m_pValue->Size());
 
 	// For each row of n bytes...
 	for (uint r = 0; r < nSize; r += BYTES_PER_ROW)
