@@ -148,9 +148,6 @@
 				RelativePath="AppDlg.cpp">
 			</File>
 			<File
-				RelativePath="AppToolBar.cpp">
-			</File>
-			<File
 				RelativePath="AppWnd.cpp">
 			</File>
 			<File
@@ -198,9 +195,6 @@
 			</File>
 			<File
 				RelativePath="AppDlg.hpp">
-			</File>
-			<File
-				RelativePath="AppToolBar.hpp">
 			</File>
 			<File
 				RelativePath=".\AppTypes.hpp">
