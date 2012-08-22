@@ -60,6 +60,8 @@ const DWORD  CDDEQueryApp::DEF_DDE_TIMEOUT = 30000;
 
 CDDEQueryApp::CDDEQueryApp()
 	: CApp(m_AppWnd, m_AppCmds)
+	, m_AppWnd()
+	, m_AppCmds(m_AppWnd)
 	, m_strLastFolder(CPath::ApplicationDir())
 	, m_oMRUList(5)
 	, m_nFlashTime(DEF_FLASH_TIME)
@@ -130,7 +132,7 @@ bool CDDEQueryApp::OnOpen()
 	m_oMRUList.UpdateMenu(*m_AppWnd.Menu(), ID_SERVER_MRU_1);
 
 	// Show it.
-	if (ShowNormal() && !m_rcLastPos.Empty())
+	if (!m_rcLastPos.Empty())
 		m_AppWnd.Move(m_rcLastPos);
 
 	// Show it.
