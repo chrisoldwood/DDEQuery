@@ -253,7 +253,7 @@ void CAppCmds::OnServerConnect(const CString& strService, const CString& strTopi
 		// Create conversation.
 		App.m_pDDEConv = DDE::CltConvPtr(App.m_pDDEClient->CreateConversation(strService, strTopic));
 
-		App.m_pDDEConv->SetTimeOut(App.m_dwDDETimeOut);
+		App.m_pDDEConv->SetTimeout(App.m_dwDDETimeOut);
 
 		// Remember new settings.
 		App.m_strLastService = strService;
@@ -424,7 +424,7 @@ void CAppCmds::OnCommandExecute()
 		App.m_AppWnd.ShowFlashIcon(true);
 
 		// Execute it.
-		App.m_pDDEConv->Execute(strCmd);
+		App.m_pDDEConv->ExecuteString(strCmd, CF_TEXT);
 	}
 	catch (CDDEException& e)
 	{
@@ -915,7 +915,7 @@ void CAppCmds::OnOptionsPrefs()
 
 	// Update conversation, if active.
 	if (App.m_pDDEConv.get() != nullptr)
-		App.m_pDDEConv->SetTimeOut(App.m_dwDDETimeOut);
+		App.m_pDDEConv->SetTimeout(App.m_dwDDETimeOut);
 }
 
 /******************************************************************************
