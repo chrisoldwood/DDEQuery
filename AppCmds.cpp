@@ -424,7 +424,7 @@ void CAppCmds::OnCommandExecute()
 		App.m_AppWnd.ShowFlashIcon(true);
 
 		// Execute it.
-		App.m_pDDEConv->ExecuteString(strCmd, CF_TEXT);
+		App.m_pDDEConv->ExecuteString(strCmd);
 	}
 	catch (CDDEException& e)
 	{
