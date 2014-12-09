@@ -1,17 +1,33 @@
 DDE Query v1.5
 ==============
 
-1) Installation.
+Introduction
+------------
+
+This is a GUI tool for querying DDE servers. It is the GUI based counterpart to
+my DDE Command console application.
+
+Releases
+--------
+
+Stable releases are formally packaged and made available from my Win32 tools page:
+http://www.chrisoldwood.com/win32.htm
+
+The latest code is available from my GitHub repo:
+https://github.com/chrisoldwood/DDEQuery
+
+Installation
+------------
 
 Run Setup.exe or copy the file DDEQuery.exe to a folder.
 
-
-2) Uninstallation.
+Uninstallation
+--------------
 
 Delete the files DDEQuery.*, ReadMe.txt and RelNotes.txt.
 
-
-3) Manual.
+Documentation
+-------------
 
 This is a utility for querying DDE servers. It has support for all the synchronous
 transaction types - Request, Advise, Execute and Poke.
@@ -74,12 +90,16 @@ link to the clipboard the entire link, e.g. "SERVICE|TOPIC!ITEM", is generated,
 but when pasting, only the "ITEM" name is extracted as it is assumed to be valid
 for the currently open conversation.
 
+Development
+-----------
 
-4) Contact Details.
+See DevNotes.txt
+
+Contact Details
+---------------
 
 Email: gort@cix.co.uk
-Web:   http://www.cix.co.uk/~gort
-
+Web:   http://www.chrisoldwood.com
 
 Chris Oldwood 
 23rd April 2005
