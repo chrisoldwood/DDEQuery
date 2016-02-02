@@ -73,7 +73,7 @@ void CConnectDlg::OnInitDialog()
 		if (m_cbService.Count() > 0)
 			m_cbService.CurSel(first);
 	}
-	catch (CDDEException& /*e*/)
+	catch (const CDDEException& /*e*/)
 	{ }
 
 	// Select previous service name.
@@ -181,7 +181,7 @@ void CConnectDlg::OnSelectServer()
 		if (m_cbTopic.Count() > 0)
 			m_cbTopic.CurSel(first);
 	}
-	catch (CDDEException& /*e*/)
+	catch (const CDDEException& /*e*/)
 	{ }
 }
 

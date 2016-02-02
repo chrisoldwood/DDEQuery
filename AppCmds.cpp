@@ -266,7 +266,7 @@ void CAppCmds::OnServerConnect(const CString& strService, const CString& strTopi
 		App.m_oMRUList.Add(strService + TXT("|") + strTopic);
 		App.m_oMRUList.UpdateMenu(*App.m_AppWnd.Menu(), ID_SERVER_MRU_1);
 	}
-	catch (CDDEException& e)
+	catch (const CDDEException& e)
 	{
 		OnServerDisconnect();
 
@@ -327,7 +327,7 @@ void CAppCmds::OnCommandRequest()
 		// Display value.
 		App.m_AppWnd.m_AppDlg.SetItemValue(oData.GetBuffer(), nFormat);
 	}
-	catch (CDDEException& e)
+	catch (const CDDEException& e)
 	{
 		// Cleanup, if disconnected.
 		if (!App.m_pDDEConv->IsConnected())
@@ -377,7 +377,7 @@ void CAppCmds::OnCommandPoke()
 		// Poke the value.
 		App.m_pDDEConv->PokeString(strItem, strValue, CF_TEXT);
 	}
-	catch (CDDEException& e)
+	catch (const CDDEException& e)
 	{
 		// Cleanup, if disconnected.
 		if (!App.m_pDDEConv->IsConnected())
@@ -426,7 +426,7 @@ void CAppCmds::OnCommandExecute()
 		// Execute it.
 		App.m_pDDEConv->ExecuteString(strCmd);
 	}
-	catch (CDDEException& e)
+	catch (const CDDEException& e)
 	{
 		// Cleanup, if disconnected.
 		if (!App.m_pDDEConv->IsConnected())
@@ -487,7 +487,7 @@ void CAppCmds::OnLinkAdvise()
 		// Add to the links listview.
 		App.m_AppWnd.m_AppDlg.AddLink(pLink);
 	}
-	catch (CDDEException& e)
+	catch (const CDDEException& e)
 	{
 		// Cleanup, if disconnected.
 		if (!App.m_pDDEConv->IsConnected())
@@ -622,7 +622,7 @@ void CAppCmds::OnLinkReqValues()
 				App.m_AppWnd.m_AppDlg.UpdateLink(pLink, oData.GetBuffer(), false);
 			}
 		}
-		catch (CDDEException& /*e*/)
+		catch (const CDDEException& /*e*/)
 		{
 		}
 	}
@@ -762,7 +762,7 @@ void CAppCmds::OnLinkOpenFile()
 		// Remember folder used.
 		App.m_strLastFolder = strPath.Directory();
 	}
-	catch(CFileException& e)
+	catch(const CFileException& e)
 	{
 		// Notify user.
 		App.AlertMsg(TXT("%s"), e.twhat());
@@ -789,7 +789,7 @@ void CAppCmds::OnLinkOpenFile()
 
 			--nErrors;
 		}
-		catch(CDDEException& /*e*/)
+		catch(const CDDEException& /*e*/)
 		{
 			// Cleanup, if disconnected.
 			if (!App.m_pDDEConv->IsConnected())
@@ -851,7 +851,7 @@ void CAppCmds::OnLinkSaveFile()
 		// Remember folder used.
 		App.m_strLastFolder = strPath.Directory();
 	}
-	catch(CFileException& e)
+	catch(const CFileException& e)
 	{
 		// Notify user.
 		App.AlertMsg(TXT("%s"), e.twhat());

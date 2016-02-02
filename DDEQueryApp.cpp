@@ -115,7 +115,7 @@ bool CDDEQueryApp::OnOpen()
 		m_pDDEClient = DDE::ClientPtr(new CDDEClient);
 		m_pDDEClient->AddListener(this);
 	}
-	catch (Core::Exception& e)
+	catch (const Core::Exception& e)
 	{
 		FatalMsg(TXT("%s"), e.twhat());
 		return false;
