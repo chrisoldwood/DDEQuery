@@ -168,7 +168,7 @@ void CAppDlg::OnTimer(uint /*nTimerID*/)
 
 			LinkData* pLinkData = m_oLinksData[pDDELink];
 
-			ASSERT(pLinkData != NULL);
+			ASSERT(pLinkData != nullptr);
 
 			// If stale, turn indicator off.
 			if ((dwNow - pLinkData->m_dwLastAdvise) > App.m_nFlashTime)
@@ -423,13 +423,13 @@ void CAppDlg::SetItemValue(const CBuffer& oBuffer, uint nFormat)
 
 bool CAppDlg::IsLinkUnadvised(CDDELink* pLink)
 {
-	ASSERT(pLink != NULL);
+	ASSERT(pLink != nullptr);
 	ASSERT(m_oLinksData.find(pLink) != m_oLinksData.end());
 
 	// Query advise count in link data.
 	LinkData* pLinkData = m_oLinksData[pLink];
 
-	ASSERT(pLinkData != NULL);
+	ASSERT(pLinkData != nullptr);
 
 	return (pLinkData->m_nAdviseCount == 0);
 }
@@ -448,13 +448,13 @@ bool CAppDlg::IsLinkUnadvised(CDDELink* pLink)
 
 CBuffer CAppDlg::GetLinkLastValue(CDDELink* pLink)
 {
-	ASSERT(pLink != NULL);
+	ASSERT(pLink != nullptr);
 	ASSERT(m_oLinksData.find(pLink) != m_oLinksData.end());
 
 	// Query advise count in link data.
 	LinkData* pLinkData = m_oLinksData[pLink];
 
-	ASSERT(pLinkData != NULL);
+	ASSERT(pLinkData != nullptr);
 
 	return pLinkData->m_oLastAdvise;
 }
@@ -466,14 +466,14 @@ CBuffer CAppDlg::GetLinkLastValue(CDDELink* pLink)
 **
 ** Parameters:	None.
 **
-** Returns:		The link or NULL, if no selection.
+** Returns:		The link or nullptr, if no selection.
 **
 *******************************************************************************
 */
 
 CDDELink* CAppDlg::GetFirstSelLink()
 {
-	CDDELink* pLink = NULL;
+	CDDELink* pLink = nullptr;
 
 	size_t nSel = m_lvLinks.Selection();
 
@@ -559,7 +559,7 @@ int CALLBACK CAppDlg::Compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 	LinkData* pLinkData1 = pDialog->m_oLinksData[pLink1];
 	LinkData* pLinkData2 = pDialog->m_oLinksData[pLink2];
 
-	ASSERT((pLinkData1 != NULL) && (pLinkData2 != NULL));
+	ASSERT((pLinkData1 != nullptr) && (pLinkData2 != nullptr));
 
 	// Sort by link name?
 	if (pDialog->m_nSortCol == ITEM_NAME)
@@ -615,7 +615,7 @@ LRESULT CAppDlg::OnLinksRightClick(NMHDR& /*oHdr*/)
 		uint nCmdID = oMenu.TrackMenu(App.m_AppWnd, CPoint(oCurrMsg.pt.x, oCurrMsg.pt.y));
 
 		// Dispatch command.
-		if (nCmdID != NULL)
+		if (nCmdID != 0)
 			App.m_AppWnd.PostCommand(nCmdID);
 	}
 

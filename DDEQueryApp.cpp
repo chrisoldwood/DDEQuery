@@ -66,7 +66,7 @@ CDDEQueryApp::CDDEQueryApp()
 	, m_oMRUList(5)
 	, m_nFlashTime(DEF_FLASH_TIME)
 	, m_dwDDETimeOut(DEF_DDE_TIMEOUT)
-	, m_pDDEConv(NULL)
+	, m_pDDEConv(nullptr)
 	, m_bInDDECall(false)
 {
 
@@ -305,7 +305,7 @@ void CDDEQueryApp::OnAdvise(CDDELink* pLink, const CDDEData* pData)
 	CBuffer oData;
 
 	// Get value, if set.
-	if (pData != NULL)
+	if (pData != nullptr)
 		oData = pData->GetBuffer();
 
 	m_AppWnd.m_AppDlg.UpdateLink(pLink, oData, true);

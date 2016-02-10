@@ -26,8 +26,8 @@
 
 CTextViewDlg::CTextViewDlg()
 	: CDialog(IDD_TEXT_VIEW)
-	, m_pValue(NULL)
-	, m_pFormat(NULL)
+	, m_pValue(nullptr)
+	, m_pFormat(nullptr)
 {
 	DEFINE_CTRL_TABLE
 		CTRL(IDC_VALUE, &m_ebValue)
@@ -56,8 +56,8 @@ CTextViewDlg::CTextViewDlg()
 
 void CTextViewDlg::OnInitDialog()
 {
-	ASSERT(m_pValue  != NULL);
-	ASSERT(m_pFormat != NULL);
+	ASSERT(m_pValue  != nullptr);
+	ASSERT(m_pFormat != nullptr);
 
 	// Tab stops are in dialog units.
 	const uint DLG_CHAR_WIDTH = 4;

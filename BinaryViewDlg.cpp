@@ -26,7 +26,7 @@
 
 CBinaryViewDlg::CBinaryViewDlg()
 	: CDialog(IDD_BINARY_VIEW)
-	, m_pValue(NULL)
+	, m_pValue(nullptr)
 {
 	DEFINE_CTRL_TABLE
 		CTRL(IDC_VALUE, &m_lbValue)
@@ -54,7 +54,7 @@ CBinaryViewDlg::CBinaryViewDlg()
 
 void CBinaryViewDlg::OnInitDialog()
 {
-	ASSERT(m_pValue != NULL);
+	ASSERT(m_pValue != nullptr);
 
 	// Set control styles.
 	m_lbValue.Font(CFont(ANSI_FIXED_FONT));

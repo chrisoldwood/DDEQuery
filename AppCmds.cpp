@@ -61,8 +61,8 @@ CAppCmds::CAppCmds(CAppWnd& appWnd)
 		CMD_ENTRY(ID_SERVER_CONNECT,		&CAppCmds::OnServerConnect,		&CAppCmds::OnUIServerConnect,		-1)
 		CMD_ENTRY(ID_SERVER_DISCONNECT,		&CAppCmds::OnServerDisconnect,	&CAppCmds::OnUIServerDisconnect,	-1)
 		CMD_RANGE(ID_SERVER_MRU_1,
-				  ID_SERVER_MRU_5,			&CAppCmds::OnServerMRU,			NULL,								-1) 
-		CMD_ENTRY(ID_SERVER_EXIT,			&CAppCmds::OnServerExit,		NULL,								-1)
+				  ID_SERVER_MRU_5,			&CAppCmds::OnServerMRU,			nullptr,							-1) 
+		CMD_ENTRY(ID_SERVER_EXIT,			&CAppCmds::OnServerExit,		nullptr,							-1)
 		// Command menu.
 		CMD_ENTRY(ID_COMMAND_REQUEST,		&CAppCmds::OnCommandRequest,	&CAppCmds::OnUICommandRequest,		-1)
 		CMD_ENTRY(ID_COMMAND_POKE,			&CAppCmds::OnCommandPoke,		&CAppCmds::OnUICommandPoke,			-1)
@@ -79,9 +79,9 @@ CAppCmds::CAppCmds(CAppWnd& appWnd)
 		CMD_ENTRY(ID_LINK_SAVE_FILE,		&CAppCmds::OnLinkSaveFile,		&CAppCmds::OnUILinkSaveFile,		-1)
 		CMD_ENTRY(ID_LINK_SHOW_VALUE,		&CAppCmds::OnLinkShowValue,		&CAppCmds::OnUILinkShowValue,		-1)
 		// Options menu.
-		CMD_ENTRY(ID_OPTIONS_PREFS,			&CAppCmds::OnOptionsPrefs,		NULL,								-1)
+		CMD_ENTRY(ID_OPTIONS_PREFS,			&CAppCmds::OnOptionsPrefs,		nullptr,							-1)
 		// Help menu.
-		CMD_ENTRY(ID_HELP_ABOUT,			&CAppCmds::OnHelpAbout,			NULL,								10)
+		CMD_ENTRY(ID_HELP_ABOUT,			&CAppCmds::OnHelpAbout,			nullptr,							10)
 	END_CMD_TABLE
 }
 
@@ -307,7 +307,7 @@ void CAppCmds::OnCommandRequest()
 	}
 
 	// Invalid format?
-	if (nFormat == NULL)
+	if (nFormat == CF_NONE)
 	{
 		App.AlertMsg(TXT("Invalid clipboard format."));
 		App.m_AppWnd.m_AppDlg.SetFormatFocus();
@@ -467,7 +467,7 @@ void CAppCmds::OnLinkAdvise()
 	}
 
 	// Invalid format?
-	if (nFormat == NULL)
+	if (nFormat == CF_NONE)
 	{
 		App.AlertMsg(TXT("Invalid clipboard format."));
 		App.m_AppWnd.m_AppDlg.SetFormatFocus();
@@ -653,7 +653,7 @@ void CAppCmds::OnLinkCopyClipboard()
 	// Get selected link.
 	CDDELink* pLink = oDlg.GetFirstSelLink();
 
-	ASSERT(pLink != NULL);
+	ASSERT(pLink != nullptr);
 
 	// Copy to clipboard.
 	CDDELink::CopyLink(App.m_AppWnd.Handle(), pLink);
@@ -682,7 +682,7 @@ void CAppCmds::OnLinkCopyItem()
 	// Get selected link.
 	CDDELink* pLink = oDlg.GetFirstSelLink();
 
-	ASSERT(pLink != NULL);
+	ASSERT(pLink != nullptr);
 
 	// Copy to Item field.
 	oDlg.SetItemName(pLink->Item());
@@ -883,7 +883,7 @@ void CAppCmds::OnLinkShowValue()
 	// Get selected link.
 	CDDELink* pLink = oDlg.GetFirstSelLink();
 
-	ASSERT(pLink != NULL);
+	ASSERT(pLink != nullptr);
 
 	CFullValueDlg Dlg;
 
