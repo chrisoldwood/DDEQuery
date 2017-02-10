@@ -329,10 +329,6 @@ void CAppCmds::OnCommandRequest()
 	}
 	catch (const CDDEException& e)
 	{
-		// Cleanup, if disconnected.
-		if (!App.m_pDDEConv->IsConnected())
-			DoServerDisconnect();
-
 		App.AlertMsg(TXT("%s"), e.twhat());
 	}
 
@@ -379,10 +375,6 @@ void CAppCmds::OnCommandPoke()
 	}
 	catch (const CDDEException& e)
 	{
-		// Cleanup, if disconnected.
-		if (!App.m_pDDEConv->IsConnected())
-			DoServerDisconnect();
-
 		App.AlertMsg(TXT("%s"), e.twhat());
 	}
 
@@ -428,10 +420,6 @@ void CAppCmds::OnCommandExecute()
 	}
 	catch (const CDDEException& e)
 	{
-		// Cleanup, if disconnected.
-		if (!App.m_pDDEConv->IsConnected())
-			DoServerDisconnect();
-
 		App.AlertMsg(TXT("%s"), e.twhat());
 	}
 
@@ -489,10 +477,6 @@ void CAppCmds::OnLinkAdvise()
 	}
 	catch (const CDDEException& e)
 	{
-		// Cleanup, if disconnected.
-		if (!App.m_pDDEConv->IsConnected())
-			DoServerDisconnect();
-
 		App.AlertMsg(TXT("%s"), e.twhat());
 	}
 
@@ -791,12 +775,7 @@ void CAppCmds::OnLinkOpenFile()
 		}
 		catch(const CDDEException& /*e*/)
 		{
-			// Cleanup, if disconnected.
-			if (!App.m_pDDEConv->IsConnected())
-			{
-				DoServerDisconnect();
-				return;
-			}
+			/* Assume other links might succeed. */
 		}
 	}
 

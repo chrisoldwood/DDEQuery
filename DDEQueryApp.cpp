@@ -278,8 +278,6 @@ void CDDEQueryApp::OnDisconnect(CDDECltConv* /*pConv*/)
 	// Cleanup, if possible.
 	if (!m_bInDDECall)
 		m_AppCmds.DoServerDisconnect();
-	else
-		m_pDDEConv.Release();
 
 	// Notify user.
 	AlertMsg(TXT("Lost connection to DDE server."));

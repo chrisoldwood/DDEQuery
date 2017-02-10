@@ -1,1 +1,3 @@
 - Show clipboard format in links view.
+
+- Visual indicator to show when already in a (slow) DDE call (to avoid REENTRANCY error).
