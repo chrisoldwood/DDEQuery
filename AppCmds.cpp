@@ -196,7 +196,7 @@ void CAppCmds::OnServerMRU(int nCmdID)
 	// Split "Service|Topic" into separate strings.
 	if (CStrTok::Split(strConv, TXT("|"), astrFields) != 2)
 	{
-		App.AlertMsg(TXT("Invalid MRU entry: %s"), strConv);
+		App.AlertMsg(TXT("Invalid MRU entry: %s"), strConv.c_str());
 		return;
 	}
 
@@ -818,7 +818,7 @@ void CAppCmds::OnLinkSaveFile()
 		oFile.Create(strPath);
 
 		// Write header.
-		oFile.WriteLine(CString::Fmt(TXT("# %s|%s"), App.m_pDDEConv->Service(), App.m_pDDEConv->Topic()), ANSI_TEXT);
+		oFile.WriteLine(CString::Fmt(TXT("# %s|%s"), App.m_pDDEConv->Service().c_str(), App.m_pDDEConv->Topic().c_str()), ANSI_TEXT);
 
 		// For all links...
 		for (size_t i = 0; i < App.m_pDDEConv->NumLinks(); ++i)
